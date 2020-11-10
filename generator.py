@@ -30,7 +30,7 @@ def main():
     parser.add_argument("-m", "--method", default='random DFS')
     parser.add_argument("-r", "--rows", default='4')
     parser.add_argument("-c", "--cols", default='4')
-    parser.add_argument("-f", "--filename")
+    parser.add_argument("-f", "--filename", default='maze.png')
     args = parser.parse_args()
     generate(args.method, int(args.rows), int(args.cols), args.filename)
 
@@ -40,9 +40,51 @@ def generate(method, rows, cols, filename):
     print("implement")
     if method == 'random DFS':
         grid = random_DFS(rows, cols)
-        print_grid(grid)
+        maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
+        create_image(maze, grid, filename)
+        #print(maze)
 
-    maze = np.zeros((rows, cols, 3))
+def maze_index(index, dir):
+    if dir == 0:
+        return (index[0], index[1] - 1)
+    elif dir == 1:
+        return (index[0], index[1] + 1)
+    elif dir == 2:
+        return (index[0] - 1, index[1])
+    return (index[0] + 1, index[1])
+
+def squareRoutine(node, maze, index, shape):
+    for i in range(4):
+        if shape == 'rightSix':
+            if i == 0:
+                continue
+        elif shape == 'bottomSix':
+            if i == 2:
+                continue
+        elif shape == 'lowerSquare':
+            if i == 0 or i == 2:
+                continue 
+        if node.walls[i] == 'X':
+            mark_as_white = maze_index(index, i)
+            maze[mark_as_white[0], mark_as_white[1]] = 255
+        maze[index[0], index[1]] = 255
+
+def create_image(maze, grid, filename):
+    print(maze.shape)
+    for i in range(len(grid)):
+        for j in range(len(grid[i])):
+            current_node = grid[i][j]
+            shape = 'full'
+            if i == 0 and j != 0:
+                shape = 'rightSix'
+            if i != 0 and j == 0:
+                shape = 'bottomSix'
+            if i != 0 and j != 0:
+                shape = 'lowerSquare'
+            squareRoutine(current_node, maze, ((2*i) + 1, (2*j) + 1), shape)
+    img = Image.fromarray(maze)
+    rsz = img.resize((maze.shape[0] * 20, maze.shape[0] * 20))
+    rsz.save(filename)
 
 def neighborCheck(grid, curr, rows, cols):
     #order: Left, Right, Top, Down
@@ -66,18 +108,18 @@ def neighborCheck(grid, curr, rows, cols):
         x = curr.index[1] + ops[i][1]
         y = curr.index[0] + ops[i][0]
         if grid[y][x].visited == False:
-            if grid[y][x].walls[i] != 'X':
+            if curr.walls[i] != 'X':
                 ret.append(i)
     return ret
 
-def nbr_index(curr, dir):
+def nbr_index(index, dir):
     if dir == 'L':
-        return (curr.index[0], curr.index[1] - 1)
+        return (index[0], index[1] - 1)
     elif dir == 'R':
-        return (curr.index[0], curr.index[1] + 1)
+        return (index[0], index[1] + 1)
     elif dir == 'T':
-        return (curr.index[0] - 1, curr.index[1])
-    return (curr.index[0] + 1, curr.index[1])
+        return (index[0] - 1, index[1])
+    return (index[0] + 1, index[1])
 
 def conv_nbr_wall(dir):
     if dir == 'L':
@@ -121,31 +163,31 @@ def random_DFS(rows, cols):
     grid[0][x].visited = True
     grid[0][x].walls[2] = 'X'
     stack.append(grid[0][x])
-    print("\nStack at the start:")
-    for i in stack:
-        print(i.index)    
+    #print("\nStack at the start:")
+    #for i in stack:
+        #print(i.index)    
     #2
     while len(stack) != 0:
-        print_grid(grid)
-        print_visited(grid)
-        print("\nStack:")
-        for i in stack:
-            print(i.index)
+        #print_grid(grid)
+        #print_visited(grid)
+        #print("\nStack:")
+        #for i in stack:
+            #print(i.index)
         #1
         curr = stack.pop()
         #2
         neighbors = neighborCheck(grid, curr, rows, cols)
-        print("neighbors: ", neighbors)
-        print("curr: ", curr.index)
+        #print("neighbors: ", neighbors)
+        #print("curr: ", curr.index)
         if len(neighbors) > 0:
             #1
             stack.append(curr)
             #2
             nbr_dir = neighbors[random.randint(0, len(neighbors) - 1)]
-            print("nbr_dir: ", nbr_dir)
-            print("curr.walls: ", curr.walls)
-            new_index = nbr_index(curr, curr.walls[nbr_dir])
-            print("new_index: ", new_index)
+            #print("nbr_dir: ", nbr_dir)
+            #print("curr.walls: ", curr.walls)
+            new_index = nbr_index(curr.index, curr.walls[nbr_dir])
+            #print("new_index: ", new_index)
             new_curr = grid[new_index[0]][new_index[1]]
             #3
             #print(nbr_dir)
@@ -155,7 +197,6 @@ def random_DFS(rows, cols):
             #4
             new_curr.visited = True
             stack.append(new_curr)
-        time.sleep(0.5)
     return grid
 
 main()
