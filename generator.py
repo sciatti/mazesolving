@@ -53,17 +53,8 @@ def maze_index(index, dir):
         return (index[0] - 1, index[1])
     return (index[0] + 1, index[1])
 
-def squareRoutine(node, maze, index, shape):
+def squareRoutine(node, maze, index):
     for i in range(4):
-        if shape == 'rightSix':
-            if i == 0:
-                continue
-        elif shape == 'bottomSix':
-            if i == 2:
-                continue
-        elif shape == 'lowerSquare':
-            if i == 0 or i == 2:
-                continue 
         if node.walls[i] == 'X':
             mark_as_white = maze_index(index, i)
             maze[mark_as_white[0], mark_as_white[1]] = 255
@@ -74,14 +65,7 @@ def create_image(maze, grid, filename):
     for i in range(len(grid)):
         for j in range(len(grid[i])):
             current_node = grid[i][j]
-            shape = 'full'
-            if i == 0 and j != 0:
-                shape = 'rightSix'
-            if i != 0 and j == 0:
-                shape = 'bottomSix'
-            if i != 0 and j != 0:
-                shape = 'lowerSquare'
-            squareRoutine(current_node, maze, ((2*i) + 1, (2*j) + 1), shape)
+            squareRoutine(current_node, maze, ((2*i) + 1, (2*j) + 1))
     img = Image.fromarray(maze)
     rsz = img.resize((maze.shape[0] * 20, maze.shape[0] * 20))
     rsz.save(filename)
@@ -158,7 +142,6 @@ def random_DFS(rows, cols):
     stack = deque()
     grid = [[node((i, j), ['L', 'R', 'T', 'B'], False) for j in range(cols)] for i in range(rows)]
     #1
-    y = random.randint(0, rows - 1)
     x = random.randint(0, cols - 1)
     grid[0][x].visited = True
     grid[0][x].walls[2] = 'X'
@@ -193,10 +176,12 @@ def random_DFS(rows, cols):
             #print(nbr_dir)
             #print(conv_nbr_wall(curr.walls[nbr_dir]))
             curr.walls[nbr_dir] = 'X'
-            new_curr.walls[conv_nbr_wall(curr.walls[nbr_dir])] = 'X'
+            #new_curr.walls[conv_nbr_wall(curr.walls[nbr_dir])] = 'X'
             #4
             new_curr.visited = True
             stack.append(new_curr)
+    x = random.randint(0, cols - 1)
+    grid[rows - 1][x].walls[3] = 'X'
     return grid
 
 main()
