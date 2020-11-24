@@ -27,7 +27,7 @@ class Maze:
                 break
 
         for y in range (1, height - 1):
-            #print ("row", str(y)) # Uncomment this line to keep a track of row progress
+            print ("row", str(y)) # Uncomment this line to keep a track of row progress
 
             rowoffset = y * width
             rowaboveoffset = rowoffset - width
