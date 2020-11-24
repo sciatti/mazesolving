@@ -27,7 +27,7 @@ class node:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--method", default='random DFS')
+    parser.add_argument("-m", "--method", default='DFS')
     parser.add_argument("-r", "--rows", default='4')
     parser.add_argument("-c", "--cols", default='4')
     parser.add_argument("-f", "--filename", default='maze.png')
@@ -35,14 +35,16 @@ def main():
     generate(args.method, int(args.rows), int(args.cols), args.filename)
 
 def generate(method, rows, cols, filename):
-    random.seed(1)
-    #random.seed(time.time())
-    print("implement")
-    if method == 'random DFS':
+    #random.seed()
+    if method == 'DFS':
         grid = random_DFS(rows, cols)
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
         create_image(maze, grid, filename)
         #print(maze)
+    if method == 'Kruskal':
+        grid = random_kruskals(rows, cols)
+        maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
+        create_image(maze, grid, filename)
 
 def maze_index(index, dir):
     if dir == 0:
@@ -183,5 +185,32 @@ def random_DFS(rows, cols):
     x = random.randint(0, cols - 1)
     grid[rows - 1][x].walls[3] = 'X'
     return grid
+
+def convert_2d(index, cols):
+    return (index // cols, index % cols)
+
+def random_kruskals(rows, cols):
+    print("implement")
+    #1
+    wall_arr = [[node(None, ['L', 'R', 'T', 'B'], None) for j in range(cols)]for i in range(rows)]
+    #[row][col]
+    cells = [[set((i,j)) for j in range(cols)] for i in range(rows)]
+    #for testing purposes set the seed to 0
+    random.seed(0)
+    #delete the previous line when done testing
+    sequence = random.sample(range(rows*cols*4), cols*rows*4)
+    #2
+    for i in range(sequence):
+        index = convert_2d(sequence[i] // 4, cols)
+        wall_num = sequence[i] % 4
+        div_cell = nbr_index(index, wall_arr[index[0]][index[1]].walls[wall_num])
+        #1
+        if cells[index[0]][index[1]].intersection(cells[div_cell[0]][div_cell[1]]) == set():
+            #1
+            wall_arr[index[0]][index[1]].walls[wall_num] = 'X'
+            #2
+            cells[index[0]][index[1]] = cells[index[0]][index[1]].union(cells[div_cell[0]][div_cell[1]])
+            cells[div_cell[0]][div_cell[1]] = cells[index[0]][index[1]]
+    return wall_arr
 
 main()
