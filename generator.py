@@ -238,6 +238,7 @@ def random_kruskals(rows, cols):
     #delete the previous line when done testing
     sequence = random.sample(range(rows*cols*4), cols*rows*4)
     #2
+    count = 0
     for i in sequence:
         index = convert_2d(i // 4, cols)
         wall_num = i % 4
@@ -247,11 +248,21 @@ def random_kruskals(rows, cols):
         #1
         if cells[index[0]][index[1]].intersection(cells[div_cell[0]][div_cell[1]]) == set():
             #1
+            #nbr_wall_num = conv_nbr_wall(wall_arr[index[0]][index[1]].walls[wall_num])
             wall_arr[index[0]][index[1]].walls[wall_num] = 'X'
+            #wall_arr[div_cell[0]][div_cell[1]].walls[nbr_wall_num] = 'X'
             #2
             cells[index[0]][index[1]] = cells[index[0]][index[1]].union(cells[div_cell[0]][div_cell[1]])
-            cells[div_cell[0]][div_cell[1]] = cells[index[0]][index[1]]
+            #cells[div_cell[0]][div_cell[1]] = cells[index[0]][index[1]]
+            cells[div_cell[0]][div_cell[1]] = cells[div_cell[0]][div_cell[1]].union(cells[index[0]][index[1]])
+            
+            maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
+            create_image(maze, wall_arr, 'SNAPSHOT'+str(count)+'.png', True, False)
+            count+=1
+        print(cells)
         #print_grid(wall_arr)
+        print()
+    print(cells)
     x = random.randint(0, cols - 1)
     wall_arr[rows - 1][x].walls[3] = 'X'
     return wall_arr
