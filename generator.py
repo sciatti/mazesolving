@@ -178,37 +178,21 @@ def random_DFS(rows, cols):
     grid[0][x].visited = True
     grid[0][x].walls[2] = 'X'
     stack.append(grid[0][x])
-    #print("\nStack at the start:")
-    #for i in stack:
-        #print(i.index)    
     #2
     while len(stack) != 0:
-        #print_grid(grid)
-        #print_visited(grid)
-        #print("\nStack:")
-        #for i in stack:
-            #print(i.index)
         #1
         curr = stack.pop()
         #2
         neighbors = neighborCheck(grid, curr, rows, cols)
-        #print("neighbors: ", neighbors)
-        #print("curr: ", curr.index)
         if len(neighbors) > 0:
             #1
             stack.append(curr)
             #2
             nbr_dir = neighbors[random.randint(0, len(neighbors) - 1)]
-            #print("nbr_dir: ", nbr_dir)
-            #print("curr.walls: ", curr.walls)
             new_index = nbr_index(curr.index, curr.walls[nbr_dir])
-            #print("new_index: ", new_index)
             new_curr = grid[new_index[0]][new_index[1]]
             #3
-            #print(nbr_dir)
-            #print(conv_nbr_wall(curr.walls[nbr_dir]))
             curr.walls[nbr_dir] = 'X'
-            #new_curr.walls[conv_nbr_wall(curr.walls[nbr_dir])] = 'X'
             #4
             new_curr.visited = True
             stack.append(new_curr)
@@ -235,7 +219,7 @@ def random_kruskals(rows, cols):
     cells = [[{(i,j)} for j in range(cols)] for i in range(rows)]
     #for testing purposes set the seed to 0
     random.seed(0)
-    #delete the previous line when done testing
+    #TODO: delete the previous line when done testing
     sequence = random.sample(range(rows*cols*4), cols*rows*4)
     #2
     count = 0
