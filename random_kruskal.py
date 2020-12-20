@@ -19,8 +19,7 @@ class node:
         self.walls = walls_in
 
 def random_kruskals(rows, cols):
-    #[row][col]
-
+    #[row][col
     #1
     cells = [[cell(i,j) for j in range(cols)] for i in range(rows)]
     wall_arr = []
@@ -28,10 +27,10 @@ def random_kruskals(rows, cols):
         for j in range(cols):
             for direction in ['R', 'D']:
                 nbr = util.nbr_index((i,j), direction)
-                if util.bounds_check(nbr, rows, cols):
+                if not util.bounds_check(nbr, rows, cols):
                     wall_arr.append(wall((i,j), nbr))
 
-    cell_set = disjoint_set(rows*cols, rows)
+    cell_set = disjoint_set(rows*cols, cols)
     grid = [[node(['L', 'R', 'T', 'B']) for j in range(cols)] for i in range(rows)]
     
     x = random.randint(0, cols - 1)
@@ -40,13 +39,15 @@ def random_kruskals(rows, cols):
     #for testing purposes set the seed to 0
     random.seed(0)
     #TODO: delete the previous line when done testing
+    print(len(wall_arr))
+    assert (len(wall_arr) == 2 * (rows - 1) * (cols - 1) + (rows - 1) + (cols - 1))
     sequence = random.sample(range(len(wall_arr)), len(wall_arr))
     #2
     for i in sequence:
         cellA = wall_arr[i].separate[0]
         cellB = wall_arr[i].separate[1]
-        cell_indexA = cellA[0] * rows + cellA[1] - 1
-        cell_indexB = cellB[0] * rows + cellB[1] - 1
+        cell_indexA = cellA[0] * cols + cellA[1]
+        cell_indexB = cellB[0] * cols + cellB[1]
         
         separateSets = cell_set.union(cell_indexA, cell_indexB)
         
@@ -57,5 +58,6 @@ def random_kruskals(rows, cols):
             grid[cellB[0]][cellB[1]].walls[wall_idx] = 'X'
             
     x = random.randint(0, cols - 1)
+    print(cell_set.parents)
     grid[0][x].walls[3] = 'X'
     return grid
