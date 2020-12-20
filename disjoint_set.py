@@ -9,7 +9,7 @@ class disjoint_set:
     #Returns the highest ancestor index of cell passed to it and updates parents of things in set
     def find(self, cell_index):        
         if self.parents[cell_index] == -1:
-            return self
+            return cell_index
         result = self.find(self.parents[cell_index])
         self.parents[cell_index] = result
         return result
@@ -19,5 +19,6 @@ class disjoint_set:
         ancestorA = self.find(cell_indexA)
         ancestorB = self.find(cell_indexB)
         if (ancestorA == ancestorB):
-            return
+            return False
         self.parents[ancestorB] = ancestorA
+        return True
