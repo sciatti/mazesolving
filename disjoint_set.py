@@ -8,10 +8,10 @@ class disjoint_set:
     
     #Returns the highest ancestor index of cell passed to it and updates parents of things in set
     def find(self, cell_index):        
-        if parents[index] == -1:
-            return cell
-        result = find(parents[cell_index])
-        parents[cell_index] = result
+        if self.parents[cell_index] == -1:
+            return self
+        result = self.find(self.parents[cell_index])
+        self.parents[cell_index] = result
         return result
     
     #returns True if items from distinct sets, false if the items were in the same set
@@ -26,7 +26,7 @@ class disjoint_set:
         locA = cellA.location
         locB = cellB.location
         
-        cell_indexA = locA[0]*row_size + locA[1] - 1
-        cell_indexB = locB[0]*row_size + locB[1] - 1
+        cell_indexA = locA[0]*self.rowSize + locA[1] - 1
+        cell_indexB = locB[0]*self.rowSize + locB[1] - 1
         
         return self.union(cell_indexA, cell_indexB)

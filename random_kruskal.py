@@ -2,13 +2,6 @@ import random
 import generator_utils as util
 import numpy as np
 
-class node:
-    visited = False
-    def __init__(self, index_in, walls_in, visited_in):
-        self.index = index_in
-        self.walls = walls_in
-        self.visited = visited_in
-
 class cell:
     def __init__(self, row, col):
         self.location = (row, col)
@@ -20,13 +13,20 @@ class wall:
     def __init__(cell_1, cell_2):
         separate = (cell_1, cell_2)
 
+class node:
+    def __init__(self, walls_in):
+        self.walls = walls_in
+
 def random_kruskals(rows, cols):
     #1
-    wall_arr = [[node(None, ['L', 'R', 'T', 'B'], None) for j in range(cols)]for i in range(rows)]
-    x = random.randint(0, cols - 1)
-    wall_arr[0][x].walls[2] = 'X'
-    #[row][col]
+    wall_arr = []
+    for i in range(rows):
+        for j in range(cols):
+            for direction in ['L', 'R', 'T', 'D']:
+                wall_arr.append([(i,j), util.nbr_index((i,j), direction)])
     cells = [[{(i,j)} for j in range(cols)] for i in range(rows)]
+    
+    #[row][col]
     #for testing purposes set the seed to 0
     random.seed(0)
     #TODO: delete the previous line when done testing
