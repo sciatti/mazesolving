@@ -6,8 +6,8 @@ import argparse
 import random
 import time
 import generator_utils as util
-import random_dfs as r_dfs
-import random_kruskal as r_krsk
+from random_dfs import random_DFS
+from random_kruskal import random_kruskals
 
 def main():
     parser = argparse.ArgumentParser()
@@ -24,12 +24,12 @@ def main():
 def generate(method, rows, cols, filename, upscale, colored):
     #random.seed()
     if method == 'DFS':
-        grid = r_dfs.random_DFS(rows, cols)
+        grid = random_DFS(rows, cols)
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
         create_image(maze, grid, filename, upscale, colored)
         #print(maze)
     if method == 'Kruskal':
-        grid = r_krsk.random_kruskals(rows, cols)
+        grid = random_kruskals(rows, cols)
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
         create_image(maze, grid, filename, upscale, colored)
 

@@ -1,6 +1,7 @@
 import random
 import generator_utils as util
 import numpy as np
+from disjoint_set import disjoint_set
 
 class cell:
     def __init__(self, row, col):
@@ -10,23 +11,27 @@ class cell:
         return self.location == other.location
 
 class wall:
-    def __init__(cell_1, cell_2):
-        separate = (cell_1, cell_2)
+    def __init__(self, cell_1, cell_2):
+        self.separate = (cell_1, cell_2)
 
 class node:
     def __init__(self, walls_in):
         self.walls = walls_in
 
 def random_kruskals(rows, cols):
+    #[row][col]
+
     #1
+    cells = [[cell(i,j) for j in range(cols)] for i in range(rows)]
     wall_arr = []
     for i in range(rows):
         for j in range(cols):
-            for direction in ['L', 'R', 'T', 'D']:
-                wall_arr.append([(i,j), util.nbr_index((i,j), direction)])
-    cells = [[{(i,j)} for j in range(cols)] for i in range(rows)]
-    
-    #[row][col]
+            for direction in ['R', 'D']:
+                nbr = util.nbr_index((i,j), direction)
+                if util.bounds_check(nbr, rows, cols):
+                    wall_arr.append(wall((i,j), nbr))
+
+    cell_set = disjoint_set(rows*cols, rows)
     #for testing purposes set the seed to 0
     random.seed(0)
     #TODO: delete the previous line when done testing
