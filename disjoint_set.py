@@ -21,12 +21,3 @@ class disjoint_set:
         if (ancestorA == ancestorB):
             return
         self.parents[ancestorB] = ancestorA
-    
-    def unionFind(self, cellA, cellB):
-        locA = cellA.location
-        locB = cellB.location
-        
-        cell_indexA = locA[0]*self.rowSize + locA[1] - 1
-        cell_indexB = locB[0]*self.rowSize + locB[1] - 1
-        
-        return self.union(cell_indexA, cell_indexB)
