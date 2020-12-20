@@ -32,36 +32,31 @@ def random_kruskals(rows, cols):
                     wall_arr.append(wall((i,j), nbr))
 
     cell_set = disjoint_set(rows*cols, rows)
+    grid = [[node(['L', 'R', 'T', 'B']) for j in range(cols)] for i in range(rows)]
+    
+    x = random.randint(0, cols - 1)
+    grid[0][x].walls[2] = 'X'
+    
     #for testing purposes set the seed to 0
     random.seed(0)
     #TODO: delete the previous line when done testing
-    sequence = random.sample(range(rows*cols*4), cols*rows*4)
+    sequence = random.sample(range(len(wall_arr)), len(wall_arr))
     #2
     count = 0
     for i in sequence:
-        index = util.convert_2d(i // 4, cols)
-        wall_num = i % 4
-        div_cell = util.nbr_index(index, wall_arr[index[0]][index[1]].walls[wall_num])
-        if util.bounds_check(div_cell, rows, cols):
-            continue
-        #1
-        if cells[index[0]][index[1]].intersection(cells[div_cell[0]][div_cell[1]]) == set():
-            #1
-            #nbr_wall_num = conv_nbr_wall(wall_arr[index[0]][index[1]].walls[wall_num])
-            wall_arr[index[0]][index[1]].walls[wall_num] = 'X'
-            #wall_arr[div_cell[0]][div_cell[1]].walls[nbr_wall_num] = 'X'
-            #2
-            cells[index[0]][index[1]] = cells[index[0]][index[1]].union(cells[div_cell[0]][div_cell[1]])
-            #cells[div_cell[0]][div_cell[1]] = cells[index[0]][index[1]]
-            cells[div_cell[0]][div_cell[1]] = cells[div_cell[0]][div_cell[1]].union(cells[index[0]][index[1]])
+        cellA = wall_arr[i].separate[0]
+        cellB = wall_arr[i].separate[1]
+        cell_indexA = cellA[0] * rows + cellA[1] - 1
+        cell_indexB = cellB[0] * rows + cellB[1] - 1
+        
+        separateSets = cell_set.union(cell_indexA, cell_indexB)
+        
+        if (separateSets):
+            direction = 
             
-            maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
-            util.create_image(maze, wall_arr, 'SNAPSHOT'+str(count)+'.png', True, False)
-            count+=1
-        print(cells)
-        #print_grid(wall_arr)
-        print()
-    print(cells)
+            grid[cellA[0]][cellA[1]].walls = 'X'
+            grid[cellB[0]][cellB[1]].walls = 'X'
+            
     x = random.randint(0, cols - 1)
-    wall_arr[rows - 1][x].walls[3] = 'X'
+    
     return wall_arr
