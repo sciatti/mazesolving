@@ -9,6 +9,17 @@ class node:
         self.walls = walls_in
         self.visited = visited_in
 
+class cell:
+    def __init__(self, row, col):
+        self.location = (row, col)
+    
+    def __eq__(self, other):
+        return self.location == other.location
+
+class wall:
+    def __init__(cell_1, cell_2):
+        separate = (cell_1, cell_2)
+
 def random_kruskals(rows, cols):
     #1
     wall_arr = [[node(None, ['L', 'R', 'T', 'B'], None) for j in range(cols)]for i in range(rows)]
