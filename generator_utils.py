@@ -42,6 +42,18 @@ def conv_nbr_wall(dir):
         return 3
     return 2
 
+def conv_idx_dir(index, nbr_index):
+    x = index[0] - nbr_index[0]
+    y = index[1] - nbr_index[1]
+    if x == 1:
+        return 'R'
+    if x == -1:
+        return 'L'
+    if y == 1:
+        return 'T'
+    if y == -1:
+        return 'D'
+
 def print_grid(grid):
     for i in range(len(grid)):
         print("[", end="")

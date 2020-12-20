@@ -42,7 +42,6 @@ def random_kruskals(rows, cols):
     #TODO: delete the previous line when done testing
     sequence = random.sample(range(len(wall_arr)), len(wall_arr))
     #2
-    count = 0
     for i in sequence:
         cellA = wall_arr[i].separate[0]
         cellB = wall_arr[i].separate[1]
@@ -52,11 +51,11 @@ def random_kruskals(rows, cols):
         separateSets = cell_set.union(cell_indexA, cell_indexB)
         
         if (separateSets):
-            direction = 
-            
-            grid[cellA[0]][cellA[1]].walls = 'X'
-            grid[cellB[0]][cellB[1]].walls = 'X'
+            wall_idx = util.conv_nbr_wall(util.conv_idx_dir(cellA, cellB))            
+            grid[cellA[0]][cellA[1]].walls[wall_idx] = 'X'
+            wall_idx = util.conv_nbr_wall(util.conv_idx_dir(cellB, cellA))            
+            grid[cellB[0]][cellB[1]].walls[wall_idx] = 'X'
             
     x = random.randint(0, cols - 1)
-    
-    return wall_arr
+    grid[0][x].walls[3] = 'X'
+    return grid
