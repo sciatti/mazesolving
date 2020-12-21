@@ -41,7 +41,7 @@ def squareRoutine(node, maze, index):
         maze[index[0], index[1]] = 255
 
 def create_image(maze, grid, filename, upscale, colored):
-    print(maze.shape)
+    #print(maze.shape)
     for i in range(len(grid)):
         for j in range(len(grid[i])):
             current_node = grid[i][j]
