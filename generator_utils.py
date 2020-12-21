@@ -39,12 +39,12 @@ def conv_nbr_wall(dir):
     elif dir == 'R':
         return 0
     elif dir == 'T':
-        return 2
-    return 3
+        return 3
+    return 2
 
 def conv_idx_dir(index, nbr_index):
-    y = index[0] - nbr_index[0]
-    x = index[1] - nbr_index[1]
+    x = index[0] - nbr_index[0]
+    y = index[1] - nbr_index[1]
     if x == 1:
         return 'R'
     if x == -1:
@@ -87,6 +87,14 @@ def maze_index(index, dir):
         return (index[0] - 1, index[1])
     return (index[0] + 1, index[1])
 
-def create_snapshot(maze, grid, filename, upscale, colored):
-    from generator import create_image
-    return create_image(maze, grid, filename, upscale, colored)
+def create_image(maze, grid, filename, upscale, colored):
+    print(maze.shape)
+    for i in range(len(grid)):
+        for j in range(len(grid[i])):
+            current_node = grid[i][j]
+            squareRoutine(current_node, maze, ((2*i) + 1, (2*j) + 1))
+    original = Image.fromarray(maze)
+    img = Image.fromarray(maze)
+    if upscale == True:
+        img = img.resize((maze.shape[0] * 20, maze.shape[0] * 20), Image.NEAREST)
+    img.save(filename)
