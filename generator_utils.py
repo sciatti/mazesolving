@@ -1,3 +1,8 @@
+
+#TODO:
+#1. create a streamlined and replicable gif creation set of functions in this file.
+#2. implement these functions into the generation algorithms available.
+
 def convert_2d(index, cols):
     return (index // cols, index % cols)
 
