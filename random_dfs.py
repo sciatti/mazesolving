@@ -1,6 +1,7 @@
 import generator_utils as util
 import random
 from collections import deque
+import numpy as np
 
 class node:
     visited = False
@@ -19,6 +20,11 @@ def random_DFS(rows, cols):
     grid[0][x].walls[2] = 'X'
     stack.append(grid[0][x])
     #2
+    count = 1
+    gif_arr = []
+    maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
+    newIMG = util.create_snapshot(maze, grid, "genOutput/SNAPSHOT0.png", True, False)
+    gif_arr.append(newIMG)
     while len(stack) != 0:
         #1
         curr = stack.pop()
@@ -36,6 +42,20 @@ def random_DFS(rows, cols):
             #4
             new_curr.visited = True
             stack.append(new_curr)
+
+            maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
+            newIMG = util.create_snapshot(maze, grid, "genOutput/SNAPSHOT" + str(count) + ".png", True, False)
+            gif_arr.append(newIMG)
+            count+=1
     x = random.randint(0, cols - 1)
     grid[rows - 1][x].walls[3] = 'X'
+    maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
+    newIMG = util.create_snapshot(maze, grid, "genOutput/SNAPSHOT" + str(count) + ".png", True, False)
+    gif_arr.append(newIMG)
+    end = gif_arr[-1]
+    for _ in range(30):
+        gif_arr.append(end)
+    from PIL import Image
+    img = gif_arr[0]
+    img.save('out.gif', save_all=True, append_images=gif_arr[1:], loop=0)
     return grid

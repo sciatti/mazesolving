@@ -86,3 +86,7 @@ def maze_index(index, dir):
     elif dir == 2:
         return (index[0] - 1, index[1])
     return (index[0] + 1, index[1])
+
+def create_snapshot(maze, grid, filename, upscale, colored):
+    from generator import create_image
+    return create_image(maze, grid, filename, upscale, colored)
