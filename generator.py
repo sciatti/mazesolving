@@ -1,4 +1,4 @@
-"""Maze Generator Created By Salvatore Ciatti"""
+"""Maze Generator Created By Salvatore Ciatti and Andrew Chen"""
 
 from PIL import Image #allows the creation and deletion of images
 import numpy as np
