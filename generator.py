@@ -1,4 +1,4 @@
-"""Maze Generator Created By Salvatore Ciatti and Andrew Chen"""
+"""Maze Generator Created By Salvatore Ciatti"""
 
 from PIL import Image #allows the creation and deletion of images
 import numpy as np
@@ -8,7 +8,6 @@ import time
 import generator_utils as util
 from random_dfs import random_DFS
 from random_kruskal import random_kruskals
-from random_prims import random_prims
 
 def main():
     parser = argparse.ArgumentParser()
@@ -33,30 +32,20 @@ def generate(method, rows, cols, filename, upscale, colored):
         grid = random_kruskals(rows, cols)
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
         create_image(maze, grid, filename, upscale, colored)
-    if method == 'Prims':
-        grid = random_prims(rows, cols)
-        maze = np.zeros(((2 * rows) + 1, (2* cols) + 1), dtype=np.uint8)
-        create_image(maze, grid, filename, upscale, colored)
 
-
-def squareRoutine(node, maze, index, debug):
+def squareRoutine(node, maze, index):
     for i in range(4):
         if node.walls[i] == 'X':
             mark_as_white = util.maze_index(index, i)
             maze[mark_as_white[0], mark_as_white[1]] = 255
-        if not debug:
-            if node.visited:
-                maze[index[0], index[1]] = 255
-        if debug:
-            maze[index[0], index[1]] = 255
+        maze[index[0], index[1]] = 255
 
-def create_image(maze, grid, filename, upscale, colored, debug=False):
+def create_image(maze, grid, filename, upscale, colored):
     #print(maze.shape)
     for i in range(len(grid)):
         for j in range(len(grid[i])):
             current_node = grid[i][j]
-            #visited = util.check_visitation(grid, (i,j))
-            squareRoutine(current_node, maze, ((2*i) + 1, (2*j) + 1), debug)
+            squareRoutine(current_node, maze, ((2*i) + 1, (2*j) + 1))
     original = Image.fromarray(maze)
     if colored == True:
         tmp = []
@@ -108,6 +97,5 @@ def create_image(maze, grid, filename, upscale, colored, debug=False):
     if upscale == True:
         img = img.resize((maze.shape[0] * 20, maze.shape[0] * 20), Image.NEAREST)
     img.save(filename)
-    return img
 
 main()
