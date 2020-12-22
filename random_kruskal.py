@@ -21,11 +21,11 @@ class node:
 def random_kruskals(rows, cols):
     #[row][col]
     #1
-    cells = [[cell(i,j) for j in range(cols)] for i in range(rows)]
+    #cells = [[cell(i,j) for j in range(cols)] for i in range(rows)]
     wall_arr = []
     for i in range(rows):
         for j in range(cols):
-            for direction in ['R', 'D']:
+            for direction in ['R', 'B']:
                 nbr = util.nbr_index((i,j), direction)
                 if not util.bounds_check(nbr, rows, cols):
                     wall_arr.append(wall((i,j), nbr))
