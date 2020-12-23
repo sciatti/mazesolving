@@ -9,6 +9,9 @@ import generator_utils as util
 from random_dfs import random_DFS
 from random_kruskal import random_kruskals
 
+#TODO: delete when done
+from prims_test import random_prims
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--method", default='DFS')
