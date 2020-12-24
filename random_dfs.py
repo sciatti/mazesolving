@@ -24,7 +24,7 @@ def random_DFS(rows, cols, gif):
     if gif:
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
         gif_arr.append(maze)
-        newIMG = util.create_snapshot(maze.copy(), (0, x), 2)
+        newIMG = util.create_snapshot(maze.copy(), (0, 2*x + 1), -1)
         gif_arr.append(newIMG)
 
     while len(stack) != 0:
@@ -47,22 +47,19 @@ def random_DFS(rows, cols, gif):
             if gif:
                 idx = (curr.index[0] * 2 + 1, curr.index[1] * 2 + 1)
                 newIMG = util.create_snapshot(gif_arr[-1].copy(), idx, nbr_dir)
-                gif_arr.append(newIMG)
+                if not np.array_equal(newIMG, gif_arr[-1]):
+                    gif_arr.append(newIMG)
         elif gif:
             idx = (curr.index[0] * 2 + 1, curr.index[1] * 2 + 1)
             newIMG = util.create_snapshot(gif_arr[-1].copy(), idx, -1)
-            gif_arr.append(newIMG)
+            if not np.array_equal(newIMG, gif_arr[-1]):
+                gif_arr.append(newIMG)
 
     x = random.randint(0, cols - 1)
     grid[rows - 1][x].walls[3] = 'X'
-    
-    from generator import create_image
-    maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
-    create_image(maze, grid, "output.png", True, False)
 
     if gif:
-        newIMG = util.create_snapshot(gif_arr[-1].copy(), curr.index, nbr_dir)
+        newIMG = util.create_snapshot(gif_arr[-1].copy(), (rows * 2, x * 2 + 1), -1)
         gif_arr.append(newIMG)
-
         return gif_arr
     return grid

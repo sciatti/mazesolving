@@ -9,6 +9,7 @@ import generator_utils as util
 from random_dfs import random_DFS
 from random_kruskal import random_kruskals
 from random_prims import random_prims
+import profiler
 
 def main():
     parser = argparse.ArgumentParser()
@@ -16,31 +17,37 @@ def main():
     parser.add_argument("-r", "--rows", default='4')
     parser.add_argument("-c", "--cols", default='4')
     parser.add_argument("-f", "--filename", default='maze.png')
-    parser.add_argument("-u", "--upscale", action='store_true')
+    parser.add_argument("-u", "--upscale", default='1')
     parser.add_argument("-clr", "--colored", action='store_true')
     parser.add_argument("-g", "--gif", action='store_true')
+    parser.add_argument("-gd", "--gifDuration", default='60')
+    parser.add_argument("-lm", "--lowMemory", action='store_true')
     args = parser.parse_args()
 
-    generate(args.method, int(args.rows), int(args.cols), args.filename, args.upscale, args.colored, args.gif)
+    generate(args.method, int(args.rows), int(args.cols), args.filename, args.upscale, args.colored, args.gif, args.gifDuration, args.lowMemory)
 
-def generate(method, rows, cols, filename, upscale, colored, gif):
-    #random.seed()
+def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowMemory):
+    random.seed(0)
+    import time
+    start = time.time()
     if method == 'DFS':
         grid = random_DFS(rows, cols, gif)
     if method == 'Kruskal':
-        grid = random_kruskals(rows, cols)
+        grid = random_kruskals(rows, cols, gif)
     if method == 'Prims':
         grid = random_prims(rows, cols)
-    
     
     if gif:
         if filename == "maze.png":
             filename = "maze.gif"
-        create_gif(grid, filename, upscale)
+        tracemalloc.start()
+        create_gif(grid, filename, upscale, duration, lowMemory)
     else:
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
         create_image(maze, grid, filename, upscale, colored)
-
+    print(time.time() - start)
+    snapshot = tracemalloc.take_snapshot()
+    display_top(snapshot)
 
 def squareRoutine(node, maze, index):
     for i in range(4):
@@ -104,19 +111,40 @@ def create_image(maze, grid, filename, upscale, colored):
         img = Image.fromarray(maze, 'RGB')
     else:
         img = Image.fromarray(maze)
-    if upscale == True:
-        img = img.resize((maze.shape[0] * 20, maze.shape[0] * 20), Image.NEAREST)
+    if upscale != '1':
+        img = img.resize((maze.shape[0] * int(upscale), maze.shape[0] * int(upscale)), Image.NEAREST)
     img.save(filename)
     return img
 
-def create_gif(gif_arr, filename, upscale):
+def create_gif(gif_arr, filename, upscale, duration, low_mem):
     img_arr = []
-    for img in gif_arr:
-        x = Image.fromarray(img)
-        if upscale:
-            x = x.resize((x.size[0] * 20, x.size[0] * 20), Image.NEAREST)
-        img_arr.append(x)
-    img = img_arr[0]
-    img.save(filename, save_all=True, append_images=img_arr[1:], loop=0)
+    print(len(gif_arr), "images required for this gif")
+    if not low_mem:
+        for img in gif_arr:
+            x = Image.fromarray(img)
+            if upscale != '1':
+                x = x.resize((x.size[0] * int(upscale), x.size[0] * int(upscale)), Image.NEAREST)
+            img_arr.append(x)
+        img = img_arr[0]
+        img.save(filename, save_all=True, append_images=img_arr[1:], loop=0, duration=(int(duration) * 1000)/len(gif_arr), optimize=True)
+    else:
+        img = Image.fromarray(gif_arr[0])
+        if upscale != '1':
+            img = img.resize((img.size[0] * int(upscale), img.size[0] * int(upscale)), Image.NEAREST)
+        img.save(filename)
+        count = 0
+        while count != len(gif_arr):
+            img = Image.open(filename)
+            if count + 100 < len(gif_arr):
+                end = count + 100
+            else:
+                end = len(gif_arr)
+            for i in range(count, end):
+                x = Image.fromarray(gif_arr[i])
+                if upscale != '1':
+                    x = x.resize((x.size[0] * int(upscale), x.size[0] * int(upscale)), Image.NEAREST)
+                img_arr.append(x)
+            count = end
+            img.save(filename, save_all=True, append_images=img_arr[:], loop=0, duration=(int(duration) * 1000 / len(img_arr))/len(gif_arr), optimize=True)
 
 main()
