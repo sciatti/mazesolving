@@ -9,6 +9,7 @@ import generator_utils as util
 from random_dfs import random_DFS
 from random_kruskal import random_kruskals
 
+from random_prims import simplified_random_prims
 #TODO: delete when done
 from prims_test import random_prims
 
@@ -37,6 +38,10 @@ def generate(method, rows, cols, filename, upscale, colored):
         create_image(maze, grid, filename, upscale, colored)
     if method == 'Prims':
         grid = random_prims(rows, cols)
+        maze = np.zeros(((2 * rows) + 1, (2* cols) + 1), dtype=np.uint8)
+        create_image(maze, grid, filename, upscale, colored)
+    if method == 'SimplePrims':
+        grid = simplified_random_prims(rows, cols)
         maze = np.zeros(((2 * rows) + 1, (2* cols) + 1), dtype=np.uint8)
         create_image(maze, grid, filename, upscale, colored)
 
