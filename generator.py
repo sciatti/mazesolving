@@ -18,45 +18,44 @@ def main():
     parser.add_argument("-f", "--filename", default='maze.png')
     parser.add_argument("-u", "--upscale", action='store_true')
     parser.add_argument("-clr", "--colored", action='store_true')
+    parser.add_argument("-g", "--gif", action='store_true')
     args = parser.parse_args()
 
-    generate(args.method, int(args.rows), int(args.cols), args.filename, args.upscale, args.colored)
+    generate(args.method, int(args.rows), int(args.cols), args.filename, args.upscale, args.colored, args.gif)
 
-def generate(method, rows, cols, filename, upscale, colored):
+def generate(method, rows, cols, filename, upscale, colored, gif):
     #random.seed()
     if method == 'DFS':
-        grid = random_DFS(rows, cols)
-        maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
-        create_image(maze, grid, filename, upscale, colored)
-        #print(maze)
+        grid = random_DFS(rows, cols, gif)
     if method == 'Kruskal':
         grid = random_kruskals(rows, cols)
-        maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
-        create_image(maze, grid, filename, upscale, colored)
     if method == 'Prims':
         grid = random_prims(rows, cols)
-        maze = np.zeros(((2 * rows) + 1, (2* cols) + 1), dtype=np.uint8)
+    
+    
+    if gif:
+        if filename == "maze.png":
+            filename = "maze.gif"
+        create_gif(grid, filename, upscale)
+    else:
+        maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
         create_image(maze, grid, filename, upscale, colored)
 
 
-def squareRoutine(node, maze, index, debug):
+def squareRoutine(node, maze, index):
     for i in range(4):
         if node.walls[i] == 'X':
             mark_as_white = util.maze_index(index, i)
             maze[mark_as_white[0], mark_as_white[1]] = 255
-        if not debug:
-            if node.visited:
-                maze[index[0], index[1]] = 255
-        if debug:
-            maze[index[0], index[1]] = 255
+        maze[index[0], index[1]] = 255
 
-def create_image(maze, grid, filename, upscale, colored, debug=False):
+def create_image(maze, grid, filename, upscale, colored):
     #print(maze.shape)
     for i in range(len(grid)):
         for j in range(len(grid[i])):
             current_node = grid[i][j]
             #visited = util.check_visitation(grid, (i,j))
-            squareRoutine(current_node, maze, ((2*i) + 1, (2*j) + 1), debug)
+            squareRoutine(current_node, maze, ((2*i) + 1, (2*j) + 1))
     original = Image.fromarray(maze)
     if colored == True:
         tmp = []
@@ -109,5 +108,15 @@ def create_image(maze, grid, filename, upscale, colored, debug=False):
         img = img.resize((maze.shape[0] * 20, maze.shape[0] * 20), Image.NEAREST)
     img.save(filename)
     return img
+
+def create_gif(gif_arr, filename, upscale):
+    img_arr = []
+    for img in gif_arr:
+        x = Image.fromarray(img)
+        if upscale:
+            x = x.resize((x.size[0] * 20, x.size[0] * 20), Image.NEAREST)
+        img_arr.append(x)
+    img = img_arr[0]
+    img.save(filename, save_all=True, append_images=img_arr[1:], loop=0)
 
 main()

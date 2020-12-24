@@ -11,7 +11,7 @@ class node:
         self.visited = visited_in
 
 
-def random_DFS(rows, cols):
+def random_DFS(rows, cols, gif):
     stack = deque()
     grid = [[node((i, j), ['L', 'R', 'T', 'B'], False) for j in range(cols)] for i in range(rows)]
     #1
@@ -20,11 +20,13 @@ def random_DFS(rows, cols):
     grid[0][x].walls[2] = 'X'
     stack.append(grid[0][x])
     #2
-    count = 1
     gif_arr = []
-    maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
-    newIMG = util.create_snapshot(maze, grid, "genOutput/SNAPSHOT0.png", True, False)
-    gif_arr.append(newIMG)
+    if gif:
+        maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
+        gif_arr.append(maze)
+        newIMG = util.create_snapshot(maze.copy(), (0, x), 2)
+        gif_arr.append(newIMG)
+
     while len(stack) != 0:
         #1
         curr = stack.pop()
@@ -42,20 +44,25 @@ def random_DFS(rows, cols):
             #4
             new_curr.visited = True
             stack.append(new_curr)
-
-            maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
-            newIMG = util.create_snapshot(maze, grid, "genOutput/SNAPSHOT" + str(count) + ".png", True, False)
+            if gif:
+                idx = (curr.index[0] * 2 + 1, curr.index[1] * 2 + 1)
+                newIMG = util.create_snapshot(gif_arr[-1].copy(), idx, nbr_dir)
+                gif_arr.append(newIMG)
+        elif gif:
+            idx = (curr.index[0] * 2 + 1, curr.index[1] * 2 + 1)
+            newIMG = util.create_snapshot(gif_arr[-1].copy(), idx, -1)
             gif_arr.append(newIMG)
-            count+=1
+
     x = random.randint(0, cols - 1)
     grid[rows - 1][x].walls[3] = 'X'
+    
+    from generator import create_image
     maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
-    newIMG = util.create_snapshot(maze, grid, "genOutput/SNAPSHOT" + str(count) + ".png", True, False)
-    gif_arr.append(newIMG)
-    end = gif_arr[-1]
-    for _ in range(30):
-        gif_arr.append(end)
-    from PIL import Image
-    img = gif_arr[0]
-    img.save('out.gif', save_all=True, append_images=gif_arr[1:], loop=0)
+    create_image(maze, grid, "output.png", True, False)
+
+    if gif:
+        newIMG = util.create_snapshot(gif_arr[-1].copy(), curr.index, nbr_dir)
+        gif_arr.append(newIMG)
+
+        return gif_arr
     return grid
