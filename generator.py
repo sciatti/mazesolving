@@ -10,6 +10,7 @@ from random_dfs import random_DFS
 from random_kruskal import random_kruskals
 from random_prims import random_prims
 import profiler
+import tracemalloc
 
 def main():
     parser = argparse.ArgumentParser()
@@ -27,9 +28,10 @@ def main():
     generate(args.method, int(args.rows), int(args.cols), args.filename, args.upscale, args.colored, args.gif, args.gifDuration, args.lowMemory)
 
 def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowMemory):
-    random.seed(0)
+    #random.seed(0)
     import time
     start = time.time()
+    grid = None
     if method == 'DFS':
         grid = random_DFS(rows, cols, gif)
     if method == 'Kruskal':
@@ -37,17 +39,17 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
     if method == 'Prims':
         grid = random_prims(rows, cols)
     
+    tracemalloc.start()    
     if gif:
         if filename == "maze.png":
             filename = "maze.gif"
-        tracemalloc.start()
         create_gif(grid, filename, upscale, duration, lowMemory)
     else:
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
         create_image(maze, grid, filename, upscale, colored)
     print(time.time() - start)
     snapshot = tracemalloc.take_snapshot()
-    display_top(snapshot)
+    profiler.display_top(snapshot)
 
 def squareRoutine(node, maze, index):
     for i in range(4):
@@ -126,7 +128,7 @@ def create_gif(gif_arr, filename, upscale, duration, low_mem):
                 x = x.resize((x.size[0] * int(upscale), x.size[0] * int(upscale)), Image.NEAREST)
             img_arr.append(x)
         img = img_arr[0]
-        img.save(filename, save_all=True, append_images=img_arr[1:], loop=0, duration=(int(duration) * 1000)/len(gif_arr), optimize=True)
+        img.save(filename, save_all=True, append_images=img_arr[1:], loop=0, duration=(int(duration) * 1000)/len(gif_arr))
     else:
         img = Image.fromarray(gif_arr[0])
         if upscale != '1':
