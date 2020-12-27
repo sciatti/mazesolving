@@ -1,3 +1,8 @@
+
+#TODO:
+#1. create a streamlined and replicable gif creation set of functions in this file.
+#2. implement these functions into the generation algorithms available.
+
 def convert_2d(index, cols):
     return (index // cols, index % cols)
 
@@ -86,3 +91,11 @@ def maze_index(index, dir):
     elif dir == 2:
         return (index[0] - 1, index[1])
     return (index[0] + 1, index[1])
+
+def create_snapshot(previous_image, index, direction):
+    previous_image[index[0], index[1]] = 255
+    if direction < 0:
+        return previous_image
+    mark_as_white = maze_index(index, direction)
+    previous_image[mark_as_white[0], mark_as_white[1]] = 255
+    return previous_image

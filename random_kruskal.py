@@ -18,7 +18,7 @@ class node:
     def __init__(self, walls_in):
         self.walls = walls_in
 
-def random_kruskals(rows, cols):
+def random_kruskals(rows, cols, gif):
     #[row][col]
     #1
     #cells = [[cell(i,j) for j in range(cols)] for i in range(rows)]
@@ -35,6 +35,13 @@ def random_kruskals(rows, cols):
     
     x = random.randint(0, cols - 1)
     grid[0][x].walls[2] = 'X'
+
+    gif_arr = []
+    if gif:
+        maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
+        gif_arr.append(maze)
+        newIMG = util.create_snapshot(maze.copy(), (0, 2*x + 1), -1)
+        gif_arr.append(newIMG)
     
     assert (len(wall_arr) == 2 * (rows - 1) * (cols - 1) + (rows - 1) + (cols - 1))
     #2
@@ -52,7 +59,23 @@ def random_kruskals(rows, cols):
             #2 is done in cell_set.union
             wall_idx = util.conv_nbr_wall(util.conv_idx_dir(cellA, cellB))
             grid[cellA[0]][cellA[1]].walls[wall_idx] = 'X'
-            
+            if gif:
+                idx = (cellA[0] * 2 + 1, cellA[1] * 2 + 1)
+                newIMG = util.create_snapshot(gif_arr[-1].copy(), idx, wall_idx)
+                if not np.array_equal(newIMG, gif_arr[-1]):
+                    gif_arr.append(newIMG)
+        elif gif:
+            idx = (cellA[0] * 2 + 1, cellA[1] * 2 + 1)
+            newIMG = util.create_snapshot(gif_arr[-1].copy(), idx, -1)
+            if not np.array_equal(newIMG, gif_arr[-1]):
+                gif_arr.append(newIMG)
+
     x = random.randint(0, cols - 1)
     grid[len(grid) - 1][x].walls[3] = 'X'
+
+    if gif:
+        newIMG = util.create_snapshot(gif_arr[-1].copy(), (rows * 2, x * 2 + 1), -1)
+        gif_arr.append(newIMG)
+        return gif_arr
+
     return grid
