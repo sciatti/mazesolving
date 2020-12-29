@@ -44,7 +44,7 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
     if method == 'SimplePrims':
         grid = simplified_random_prims(rows, cols)
     if method == 'Wilson':
-        grid = wilsons(rows, cols)
+        grid = wilsons(rows, cols, gif)
     tracemalloc.start()    
     if gif:
         if filename == "maze.png":
@@ -133,7 +133,9 @@ def create_gif(gif_arr, filename, upscale, duration, low_mem):
                 x = x.resize((x.size[0] * int(upscale), x.size[0] * int(upscale)), Image.NEAREST)
             img_arr.append(x)
         img = img_arr[0]
-        img.save(filename, save_all=True, append_images=img_arr[1:], loop=0, duration=(int(duration) * 1000)/len(gif_arr))
+        dur = max(20,(int(duration) * 1000)/len(gif_arr))
+        img.save(filename, save_all=True, append_images=img_arr[1:], loop=0, duration=dur)
+        #img_arr[-1].save("last_frame.png")
     else:
         img = Image.fromarray(gif_arr[0])
         if upscale != '1':
