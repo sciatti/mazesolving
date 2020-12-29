@@ -1,4 +1,4 @@
-
+import numpy as np
 #TODO:
 #1. create a streamlined and replicable gif creation set of functions in this file.
 #2. implement these functions into the generation algorithms available.
@@ -92,10 +92,23 @@ def maze_index(index, dir):
         return (index[0] - 1, index[1])
     return (index[0] + 1, index[1])
 
-def create_snapshot(previous_image, index, direction):
-    previous_image[index[0], index[1]] = 255
+def create_snapshot(new_image, index, direction):
+    new_image[index[0], index[1]] = 255
     if direction < 0:
-        return previous_image
+        return new_image
     mark_as_white = maze_index(index, direction)
-    previous_image[mark_as_white[0], mark_as_white[1]] = 255
-    return previous_image
+    new_image[mark_as_white[0], mark_as_white[1]] = 255
+    return new_image
+
+def grid_to_image(index):
+    return (index[0] * 2 + 1, index[1] * 2 + 1)
+
+def mark_change(idx, gif_arr, wall_idx):
+    newIMG = create_snapshot(gif_arr[-1].copy(), idx, wall_idx)
+    if not np.array_equal(newIMG, gif_arr[-1]):
+        gif_arr.append(newIMG)
+
+def mark_node(idx, gif_arr):
+    newIMG = create_snapshot(gif_arr[-1].copy(), idx, -1)
+    if not np.array_equal(newIMG, gif_arr[-1]):
+        gif_arr.append(newIMG)
