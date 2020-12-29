@@ -9,9 +9,9 @@ import generator_utils as util
 from random_dfs import random_DFS
 from random_kruskal import random_kruskals
 from random_prims import simplified_random_prims
-#TODO: delete when done
 from prims_test import random_prims
-from random_prims import random_prims
+from wilsons import wilsons
+#TODO: delete when done
 import profiler
 import tracemalloc
 
@@ -43,7 +43,8 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
         grid = random_prims(rows, cols)
     if method == 'SimplePrims':
         grid = simplified_random_prims(rows, cols)
-
+    if method == 'Wilson':
+        grid = wilsons(rows, cols)
     tracemalloc.start()    
     if gif:
         if filename == "maze.png":
