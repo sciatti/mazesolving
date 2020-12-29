@@ -44,7 +44,7 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
     if method == 'SimplePrims':
         grid = simplified_random_prims(rows, cols, gif)
     if method == 'Wilson':
-        grid = wilsons(rows, cols)
+        grid = wilsons(rows, cols, gif)
     tracemalloc.start()    
     if gif:
         if filename == "maze.png":
