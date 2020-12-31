@@ -19,6 +19,7 @@ class node:
         self.walls = walls_in
 
 def random_kruskals(rows, cols, gif):
+    random.seed(0)
     #[row][col]
     #1
     #cells = [[cell(i,j) for j in range(cols)] for i in range(rows)]
@@ -50,7 +51,7 @@ def random_kruskals(rows, cols, gif):
         cellB = wall_arr[i].separate[1]
         cell_indexA = cellA[0] * cols + cellA[1]
         cell_indexB = cellB[0] * cols + cellB[1]
-        
+    
         separateSets = cell_set.union(cell_indexA, cell_indexB)
         #1
         if (separateSets):
@@ -59,7 +60,7 @@ def random_kruskals(rows, cols, gif):
             wall_idx = util.conv_nbr_wall(util.conv_idx_dir(cellA, cellB))
             grid[cellA[0]][cellA[1]].walls[wall_idx] = 'X'
             if gif:
-                util.mark_change(util.grid_to_image(cellA), gif_arr, wall_idx)
+                util.mark_change(util.grid_to_image(cellA), gif_arr, wall_idx, util.grid_to_image(cellB))
         elif gif:
             util.mark_node(util.grid_to_image(cellA), gif_arr)
 

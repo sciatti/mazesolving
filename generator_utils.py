@@ -103,12 +103,20 @@ def create_snapshot(new_image, index, direction):
 def grid_to_image(index):
     return (index[0] * 2 + 1, index[1] * 2 + 1)
 
-def mark_change(idx, gif_arr, wall_idx):
-    newIMG = create_snapshot(gif_arr[-1].copy(), idx, wall_idx)
+def mark_change(idx, gif_arr, wall_idx, secondIdx = None):
+    if secondIdx == None:
+        newIMG = create_snapshot(gif_arr[-1].copy(), idx, wall_idx)
+    else:
+        newIMG = create_snapshot(gif_arr[-1].copy(), idx, wall_idx)
+        newIMG = create_snapshot(newIMG, secondIdx, -1)
     if not np.array_equal(newIMG, gif_arr[-1]):
         gif_arr.append(newIMG)
 
-def mark_node(idx, gif_arr):
-    newIMG = create_snapshot(gif_arr[-1].copy(), idx, -1)
+def mark_node(idx, gif_arr, secondIdx = None):
+    if secondIdx == None:
+        newIMG = create_snapshot(gif_arr[-1].copy(), idx, -1)
+    else:
+        newIMG = create_snapshot(gif_arr[-1].copy(), idx, -1)
+        newIMG = create_snapshot(newIMG, secondIdx, -1)
     if not np.array_equal(newIMG, gif_arr[-1]):
         gif_arr.append(newIMG)
