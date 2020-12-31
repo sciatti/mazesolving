@@ -137,7 +137,6 @@ def create_gif(gif_arr, filename, upscale, duration, low_mem):
         duration_arr = [max(int(duration), 20)] * (len(gif_arr) - 1)
         duration_arr.append(2000)
         img.save(filename, save_all=True, append_images=img_arr[1:], loop=0, duration=duration_arr, optimize=True)
-        img_arr[-1].save("final_frame.png")
     else:
         img = Image.fromarray(gif_arr[0])
         if upscale != '1':
