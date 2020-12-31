@@ -40,9 +40,9 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
     if method == 'Kruskal':
         grid = random_kruskals(rows, cols, gif)
     if method == 'Prims':
-        grid = random_prims(rows, cols)
+        grid = random_prims(rows, cols, gif)
     if method == 'SimplePrims':
-        grid = simplified_random_prims(rows, cols)
+        grid = simplified_random_prims(rows, cols, gif)
     if method == 'Wilson':
         grid = wilsons(rows, cols, gif)
     tracemalloc.start()    
@@ -54,7 +54,7 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
         create_image(maze, grid, filename, upscale, colored)
 
-    print(time.time() - start)
+    print("Time to execute: ", time.time() - start)
     snapshot = tracemalloc.take_snapshot()
     profiler.display_top(snapshot)
 
@@ -132,10 +132,12 @@ def create_gif(gif_arr, filename, upscale, duration, low_mem):
             if upscale != '1':
                 x = x.resize((x.size[0] * int(upscale), x.size[0] * int(upscale)), Image.NEAREST)
             img_arr.append(x)
+        duration = (int(duration) * 1000)/len(gif_arr)
         img = img_arr[0]
-        dur = max(20,(int(duration) * 1000)/len(gif_arr))
-        img.save(filename, save_all=True, append_images=img_arr[1:], loop=0, duration=dur)
-        #img_arr[-1].save("last_frame.png")
+        duration_arr = [max(int(duration), 20)] * (len(gif_arr) - 1)
+        duration_arr.append(2000)
+        img.save(filename, save_all=True, append_images=img_arr[1:], loop=0, duration=duration_arr, optimize=True)
+        img_arr[-1].save("final_frame.png")
     else:
         img = Image.fromarray(gif_arr[0])
         if upscale != '1':

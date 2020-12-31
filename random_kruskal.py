@@ -40,8 +40,7 @@ def random_kruskals(rows, cols, gif):
     if gif:
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
         gif_arr.append(maze)
-        newIMG = util.create_snapshot(maze.copy(), (0, 2*x + 1), -1)
-        gif_arr.append(newIMG)
+        util.mark_node((0, x * 2 + 1), gif_arr)
     
     assert (len(wall_arr) == 2 * (rows - 1) * (cols - 1) + (rows - 1) + (cols - 1))
     #2
@@ -60,22 +59,15 @@ def random_kruskals(rows, cols, gif):
             wall_idx = util.conv_nbr_wall(util.conv_idx_dir(cellA, cellB))
             grid[cellA[0]][cellA[1]].walls[wall_idx] = 'X'
             if gif:
-                idx = (cellA[0] * 2 + 1, cellA[1] * 2 + 1)
-                newIMG = util.create_snapshot(gif_arr[-1].copy(), idx, wall_idx)
-                if not np.array_equal(newIMG, gif_arr[-1]):
-                    gif_arr.append(newIMG)
+                util.mark_change(util.grid_to_image(cellA), gif_arr, wall_idx)
         elif gif:
-            idx = (cellA[0] * 2 + 1, cellA[1] * 2 + 1)
-            newIMG = util.create_snapshot(gif_arr[-1].copy(), idx, -1)
-            if not np.array_equal(newIMG, gif_arr[-1]):
-                gif_arr.append(newIMG)
+            util.mark_node(util.grid_to_image(cellA), gif_arr)
 
     x = random.randint(0, cols - 1)
     grid[len(grid) - 1][x].walls[3] = 'X'
 
     if gif:
-        newIMG = util.create_snapshot(gif_arr[-1].copy(), (rows * 2, x * 2 + 1), -1)
-        gif_arr.append(newIMG)
+        util.mark_node((rows * 2, x * 2 + 1), gif_arr)
         return gif_arr
 
     return grid
