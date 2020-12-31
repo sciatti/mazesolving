@@ -22,7 +22,7 @@ def neighborCheck(grid, curr, rows, cols):
         #bounds checking
         x = curr.index[1] + ops[i][1]
         y = curr.index[0] + ops[i][0]
-        if bounds_check((x,y), rows, cols):
+        if bounds_check((y,x), rows, cols):
             continue
         if grid[y][x].visited == False:
             if curr.walls[i] != 'X':
@@ -120,3 +120,17 @@ def mark_node(idx, gif_arr, secondIdx = None):
         newIMG = create_snapshot(newIMG, secondIdx, -1)
     if not np.array_equal(newIMG, gif_arr[-1]):
         gif_arr.append(newIMG)
+
+def getNeighbor(grid, curr, rows, cols):
+    #order: Left, Right, Top, Down
+    ops = [(0,-1), (0,1), (-1,0), (1,0)]
+    #short for operations
+    ret = []
+    for i in range(4):
+        #bounds checking
+        x = curr.index[1] + ops[i][1]
+        y = curr.index[0] + ops[i][0]
+        if bounds_check((y,x), rows, cols):
+            continue
+        ret.append(grid[y][x])
+    return ret

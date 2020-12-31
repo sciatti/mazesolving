@@ -11,6 +11,7 @@ from random_kruskal import random_kruskals
 from random_prims import simplified_random_prims
 from prims_test import random_prims
 from wilsons import wilsons
+from Aldous_Broder import aldousBroder
 #TODO: delete when done
 import profiler
 import tracemalloc
@@ -45,6 +46,8 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
         grid = simplified_random_prims(rows, cols, gif)
     if method == 'Wilson':
         grid = wilsons(rows, cols, gif)
+    if method == 'Aldous':
+        grid = aldousBroder(rows, cols, gif)
     tracemalloc.start()    
     if gif:
         if filename == "maze.png":
