@@ -54,15 +54,16 @@ def wilsons(rows, cols, gif):
                     if ((path_r, path_c)) in cur_path:
                         #Created a loop
                         frame = cur_path[(path_r,path_c)]
-                        gif_arr.append(gif_arr[frame[0] - 1])
-                        #cur_path[(path_r,path_c)] = len(gif_arr) - 1
+                        
+                        newIMG = util.create_snapshot(gif_arr[frame[0] - 1].copy(), (path_r * 2 + 1,path_c * 2 + 1), -1)
+                        #gif_arr.append(gif_arr[frame[0] - 1])
+                        gif_arr.append(newIMG)
                         
                         #Remove the items in loop from cur_path
                         for i in range(counter - frame[1] - 1):
                             cur_path.popitem()
                         counter = frame[1]
                         cur_path[(path_r,path_c)] = [len(gif_arr) - 1, counter]
-                        
                         
                 #Pick random direction to move
                 random.shuffle(directions)
@@ -87,17 +88,10 @@ def wilsons(rows, cols, gif):
             trace_r = r
             trace_c = c
             #If gif only need to mark as part of maze
-            prev = ''
             if gif:
                 while((trace_r,trace_c) != (path_r,path_c)):
                     grid[trace_r][trace_c].in_maze=True
                     trace_r, trace_c = util.nbr_index((trace_r,trace_c), grid[trace_r][trace_c].direction)
-                    prev = grid[trace_r][trace_c].direction
-                #wall_idx = opposite(prev)
-                #idx = (path_r * 2 + 1, path_c * 2 + 1)
-                #newIMG = util.create_snapshot(gif_arr[-1].copy(), idx, opposite(prev))
-                #gif_arr.append(newIMG)
-            #NO GIF | Trace path here
             else:
                 while((trace_r,trace_c) != (path_r,path_c)):
                     wall_idx = conv_nbr_wall(grid[trace_r][trace_c].direction)
