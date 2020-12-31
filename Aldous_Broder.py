@@ -10,7 +10,6 @@ class node:
         self.visited = visited_in
 
 def aldousBroder(rows, cols, gif):
-    random.seed(0)
     grid = [[node((i, j), ['L', 'R', 'T', 'B'], False) for j in range(cols)] for i in range(rows)]
 
     x = random.randint(0, cols - 1)
