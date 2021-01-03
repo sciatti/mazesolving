@@ -19,11 +19,11 @@ def conv_nbr_wall(dir):
     return 3
 
 def wilson_create_snapshot(new_image, index, direction):
-    new_image[index[0], index[1]] = 200
+    new_image[index[0], index[1]] = 128
     if direction < 0:
         return new_image
     mark = util.maze_index(index, direction)
-    new_image[mark[0], mark[1]] = 200
+    new_image[mark[0], mark[1]] = 128
     return new_image
 
 
@@ -70,7 +70,7 @@ def wilson_gif(rows, cols):
                     #Created a loop
                     frame = cur_path[(path_r,path_c)]
                     
-                    newIMG = util.create_snapshot(gif_arr[frame[0] - 1].copy(), (path_r * 2 + 1,path_c * 2 + 1), -1)
+                    newIMG = wilson_create_snapshot(gif_arr[frame[0] - 1].copy(), (path_r * 2 + 1,path_c * 2 + 1), -1)
                     gif_arr.append(newIMG)
                     
                     #Remove the items in loop from cur_path
@@ -91,7 +91,7 @@ def wilson_gif(rows, cols):
                     wall_idx = conv_nbr_wall(grid[path_r][path_c].direction)
                     
                     idx = (path_r * 2 + 1, path_c * 2 + 1)
-                    newIMG = util.create_snapshot(gif_arr[-1].copy(), idx, wall_idx)
+                    newIMG = wilson_create_snapshot(gif_arr[-1].copy(), idx, wall_idx)
                     gif_arr.append(newIMG)
                     cur_path[(path_r,path_c)] = [len(gif_arr) - 1, counter]
                     cur_path.move_to_end((path_r,path_c))
@@ -102,13 +102,13 @@ def wilson_gif(rows, cols):
             trace_r = r
             trace_c = c
             #If gif only need to mark as part of maze
-            #newIMG = gif_arr[-1].copy() 
+            newIMG = gif_arr[-1].copy() 
             while((trace_r,trace_c) != (path_r,path_c)):
-                #wall_idx = conv_nbr_wall(grid[trace_r][trace_c].direction)
-                #newIMG = util.create_snapshot(newIMG, idx, wall_idx)
+                wall_idx = conv_nbr_wall(grid[trace_r][trace_c].direction)
+                newIMG = util.create_snapshot(newIMG, (trace_r * 2 + 1,trace_c * 2 + 1), wall_idx)
                 grid[trace_r][trace_c].in_maze=True
                 trace_r, trace_c = util.nbr_index((trace_r,trace_c), grid[trace_r][trace_c].direction)
-            
+            gif_arr.append(newIMG)
     #Top entrance
     x = random.randint(0, cols - 1)
     
