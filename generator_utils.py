@@ -92,36 +92,38 @@ def maze_index(index, dir):
         return (index[0] - 1, index[1])
     return (index[0] + 1, index[1])
 
-def create_snapshot(new_image, index, direction):
-    new_image[index[0], index[1]] = 255
+def create_snapshot(new_image, index, direction, color):
+    if color == None:
+        color = 255
+    new_image[index[0], index[1]] = color
     if direction < 0:
         return new_image
     mark_as_white = maze_index(index, direction)
-    new_image[mark_as_white[0], mark_as_white[1]] = 255
+    new_image[mark_as_white[0], mark_as_white[1]] = color
     return new_image
 
 def grid_to_image(index):
     return (index[0] * 2 + 1, index[1] * 2 + 1)
 
-def mark_change(idx, gif_arr, wall_idx, secondIdx = None):
+def mark_change(idx, gif_arr, wall_idx, secondIdx = None, color = None):
     if secondIdx == None:
-        newIMG = create_snapshot(gif_arr[-1].copy(), idx, wall_idx)
+        newIMG = create_snapshot(gif_arr[-1].copy(), idx, wall_idx, color)
     else:
-        newIMG = create_snapshot(gif_arr[-1].copy(), idx, wall_idx)
-        newIMG = create_snapshot(newIMG, secondIdx, -1)
+        newIMG = create_snapshot(gif_arr[-1].copy(), idx, wall_idx, color)
+        newIMG = create_snapshot(newIMG, secondIdx, -1, color)
     if not np.array_equal(newIMG, gif_arr[-1]):
         gif_arr.append(newIMG)
 
-def mark_node(idx, gif_arr, secondIdx = None):
+def mark_node(idx, gif_arr, secondIdx = None, color = None):
     if secondIdx == None:
-        newIMG = create_snapshot(gif_arr[-1].copy(), idx, -1)
+        newIMG = create_snapshot(gif_arr[-1].copy(), idx, -1, color)
     else:
-        newIMG = create_snapshot(gif_arr[-1].copy(), idx, -1)
-        newIMG = create_snapshot(newIMG, secondIdx, -1)
+        newIMG = create_snapshot(gif_arr[-1].copy(), idx, -1, color)
+        newIMG = create_snapshot(newIMG, secondIdx, -1, color)
     if not np.array_equal(newIMG, gif_arr[-1]):
         gif_arr.append(newIMG)
 
-def getNeighbor(grid, curr, rows, cols):
+def getNeighbor(grid, curr, rows, cols, previous):
     #order: Left, Right, Top, Down
     ops = [(0,-1), (0,1), (-1,0), (1,0)]
     #short for operations
@@ -130,7 +132,7 @@ def getNeighbor(grid, curr, rows, cols):
         #bounds checking
         x = curr.index[1] + ops[i][1]
         y = curr.index[0] + ops[i][0]
-        if bounds_check((y,x), rows, cols):
+        if bounds_check((y,x), rows, cols) or (y,x) == previous.index:
             continue
         ret.append(grid[y][x])
     return ret
