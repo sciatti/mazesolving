@@ -36,17 +36,17 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
     import time
     start = time.time()
     grid = None
-    if method == 'DFS':
+    if method.lower() == 'dfs':
         grid = random_DFS(rows, cols, gif)
-    if method == 'Kruskal':
+    if method.lower() == 'kruskal':
         grid = random_kruskals(rows, cols, gif)
-    if method == 'Prims':
+    if method.lower() == 'prims':
         grid = random_prims(rows, cols, gif)
-    if method == 'SimplePrims':
+    if method.lower() == 'simpleprims':
         grid = simplified_random_prims(rows, cols, gif)
-    if method == 'Wilson':
+    if method.lower() == 'wilson':
         grid = wilsons(rows, cols, gif)
-    if method == 'Aldous':
+    if method.lower() == 'aldous':
         grid = aldousBroder(rows, cols, gif)
     tracemalloc.start()    
     if gif:
