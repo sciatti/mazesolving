@@ -136,3 +136,39 @@ def getNeighbor(grid, curr, rows, cols, previous):
             continue
         ret.append(grid[y][x])
     return ret
+
+def print_maze(grid):
+    maze = np.chararray((len(grid) * 2 + 1, len(grid[0]) * 2 + 1))
+    maze[:,:] = '@'
+    for i in range(len(grid)):
+        for j in range(len(grid[i])):
+            for k in range(4):
+                idx = maze_index((i * 2 + 1,j * 2 + 1), k)
+                maze[i * 2 + 1, j * 2 + 1] = '+'
+                if grid[i][j].walls[k] == 'X':
+                    if k == 0 or k == 1:
+                        maze[idx[0], idx[1]] = '-'
+                    else:
+                        maze[idx[0], idx[1]] = '|'
+    for i in range(maze.shape[0]):
+        for j in range(maze.shape[1]):
+            print(maze[i,j].decode('utf-8'), end=" ")
+        print()   
+
+def squareRoutine(node, maze, index):
+    for i in range(4):
+        if node.walls[i] != 'X':
+            mark_as_white = maze_index(index, i)
+            maze[mark_as_white[0], mark_as_white[1]] = 0
+        maze[index[0], index[1]] = 0
+
+def create_image(maze, grid):
+    #print(maze.shape)
+    for i in range(len(grid)):
+        for j in range(len(grid[i])):
+            current_node = grid[i][j]
+            squareRoutine(current_node, maze, ((2*i) + 1, (2*j) + 1))
+    from PIL import Image
+    img = Image.fromarray(maze)
+    img = img.resize((maze.shape[0] * 20, maze.shape[0] * 20), Image.NEAREST)
+    img.save("rec_div_output.png")

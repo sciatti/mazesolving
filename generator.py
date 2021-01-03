@@ -12,6 +12,7 @@ from random_prims import simplified_random_prims
 from prims_test import random_prims
 from wilsons import wilsons
 from Aldous_Broder import aldousBroder
+from recursive_div import recursive_division
 #TODO: delete when done
 import profiler
 import tracemalloc
@@ -48,6 +49,8 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
         grid = wilsons(rows, cols, gif)
     if method.lower() == 'aldous':
         grid = aldousBroder(rows, cols, gif)
+    if method.lower() == 'recursive':
+        grid = recursive_division(rows, cols, gif)
     tracemalloc.start()    
     if gif:
         if filename == "maze.png":
