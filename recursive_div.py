@@ -30,15 +30,13 @@ def chamber_divide(grid, start_row, end_row, start_col, end_col, gif, gif_arr):
                 grid[r][col_pos].walls[idx] = wall_char
                 grid[r][col_pos - 1].walls[idx + 1] = 'R'
             
-            if col_pos != 0:
-                #Select a random entrance
-                entrance = random.randint(start_row, end_row - 1)
-                grid[entrance][col_pos].walls[idx] = 'X'
+            #Select a random entrance
+            entrance = random.randint(start_row, end_row - 1)
+            grid[entrance][col_pos].walls[idx] = 'X'
         
             if gif:
                 gif_arr.append(recDiv_create_snapshot(gif_arr[-1], start_row, end_row, False, col_pos, entrance))
-                #gif_arr.append(copy.deepcopy(grid))
-        #Now have two chambers --> start_col - col_pos, col_pos - end_col
+
         chamber_divide(grid, start_row, end_row, start_col, col_pos, gif, gif_arr)
         chamber_divide(grid, start_row, end_row, col_pos, end_col, gif, gif_arr)
         
@@ -54,16 +52,14 @@ def chamber_divide(grid, start_row, end_row, start_col, end_col, gif, gif_arr):
             for c in range(start_col, end_col):
                 grid[row_pos][c].walls[idx] = wall_char
                 grid[row_pos - 1][c].walls[idx + 1] = 'B'
-            #if row_pos != 0:
+            
             #Select a random entrance
-            if row_pos != 0:
-                entrance = random.randint(start_col, end_col - 1)
-                grid[row_pos][entrance].walls[idx] = 'X'
+            entrance = random.randint(start_col, end_col - 1)
+            grid[row_pos][entrance].walls[idx] = 'X'
         
             if gif:
                 gif_arr.append(recDiv_create_snapshot(gif_arr[-1], start_col, end_col, True, row_pos, entrance))
-                #gif_arr.append(copy.deepcopy(grid))
-        #Now have two chambers --> start_row - row_pos, row_pos - end_row
+
         chamber_divide(grid, start_row, row_pos, start_col, end_col, gif, gif_arr)
         chamber_divide(grid, row_pos, end_row, start_col, end_col, gif, gif_arr)
 
@@ -96,15 +92,9 @@ def recursive_division(rows, cols, gif):
         gif_arr.append(maze)
     
     chamber_divide(grid, 0, rows, 0, cols, gif, gif_arr)
-    
-    #For now, using separate image creation
-    
+        
     if gif:
         return gif_arr
-    
-    #maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
-    #util.create_image(maze, grid, True)
-    
     return grid
 
 #Pass copy of previous grid as well as column / row to insert wall
