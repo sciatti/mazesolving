@@ -162,7 +162,7 @@ def squareRoutine(node, maze, index):
             maze[mark_as_white[0], mark_as_white[1]] = 0
         maze[index[0], index[1]] = 0
 
-def create_image(maze, grid):
+def create_image(maze, grid, save=False):
     #print(maze.shape)
     for i in range(len(grid)):
         for j in range(len(grid[i])):
@@ -170,5 +170,9 @@ def create_image(maze, grid):
             squareRoutine(current_node, maze, ((2*i) + 1, (2*j) + 1))
     from PIL import Image
     img = Image.fromarray(maze)
-    img = img.resize((maze.shape[0] * 20, maze.shape[0] * 20), Image.NEAREST)
-    img.save("rec_div_output.png")
+    if save:
+        img = img.resize((maze.shape[0] * 20, maze.shape[0] * 20), Image.NEAREST)
+        img.save("rec_div_output.png")
+        
+    else:
+        return img
