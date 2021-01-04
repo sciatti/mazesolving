@@ -176,3 +176,26 @@ def create_image(maze, grid, save=False):
         
     else:
         return img
+
+def create_gif(gif_arr, filename, upscale, duration):
+    img_arr = []
+    print(len(gif_arr), "images required for this gif")
+    from PIL import Image
+    print('---------------------------')
+    for grid in gif_arr:
+        print_maze(grid)
+        print()
+        maze = np.zeros((2*len(grid) + 1, 2*len(grid[0]) + 1))
+        
+        maze.fill(255)
+        
+        x = create_image(maze, grid)
+        
+        if upscale != '1':
+            x = x.resize((x.size[0] * int(upscale), x.size[0] * int(upscale)), Image.NEAREST)
+        img_arr.append(x)
+    duration = (int(duration) * 1000)/len(gif_arr)
+    img = img_arr[0]
+    duration_arr = [max(int(duration), 20)] * (len(gif_arr) - 1)
+    duration_arr.append(2000)
+    img.save(filename, save_all=True, append_images=img_arr[1:], loop=0, duration=duration_arr, optimize=True)

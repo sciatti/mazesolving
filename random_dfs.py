@@ -56,4 +56,3 @@ def random_DFS(rows, cols, gif):
         return gif_arr
 
     return grid
-    x = 0

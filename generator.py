@@ -55,6 +55,9 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
     if gif:
         if filename == "maze.png":
             filename = "maze.gif"
+        #if method.lower() == "recursive":
+        #    util.create_gif(grid, filename, upscale, duration)
+        #else:
         create_gif(grid, filename, upscale, duration, lowMemory)
     else:
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
