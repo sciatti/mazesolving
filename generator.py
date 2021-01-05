@@ -33,7 +33,7 @@ def main():
     generate(args.method, int(args.rows), int(args.cols), args.filename, args.upscale, args.colored, args.gif, args.gifDuration, args.lowMemory)
 
 def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowMemory):
-    #random.seed(0)
+    random.seed(0)
     import time
     start = time.time()
     grid = None
