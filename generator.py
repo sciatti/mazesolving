@@ -13,6 +13,7 @@ from prims_test import random_prims
 from wilsons import wilsons
 from Aldous_Broder import aldousBroder
 from recursive_div import recursive_division
+from binary import binary_tree_maze
 #TODO: delete when done
 import profiler
 import tracemalloc
@@ -33,7 +34,7 @@ def main():
     generate(args.method, int(args.rows), int(args.cols), args.filename, args.upscale, args.colored, args.gif, args.gifDuration, args.lowMemory)
 
 def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowMemory):
-    random.seed(0)
+    #random.seed(0)
     import time
     start = time.time()
     grid = None
@@ -51,13 +52,12 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
         grid = aldousBroder(rows, cols, gif)
     if method.lower() == 'recursive':
         grid = recursive_division(rows, cols, gif)
+    if method.lower() == 'binary':
+        grid = binary_tree_maze(rows, cols, gif)
     tracemalloc.start()    
     if gif:
         if filename == "maze.png":
             filename = "maze.gif"
-        #if method.lower() == "recursive":
-        #    util.create_gif(grid, filename, upscale, duration)
-        #else:
         create_gif(grid, filename, upscale, duration, lowMemory)
     else:
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
