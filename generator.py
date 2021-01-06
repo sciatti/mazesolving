@@ -14,6 +14,8 @@ from wilsons import wilsons
 from Aldous_Broder import aldousBroder
 from recursive_div import recursive_division
 from binary import binary_tree_maze
+from cellular_automata import Maze
+from cellular_automata import Mazectric
 #TODO: delete when done
 import profiler
 import tracemalloc
@@ -29,11 +31,12 @@ def main():
     parser.add_argument("-g", "--gif", action='store_true')
     parser.add_argument("-gd", "--gifDuration", default='60')
     parser.add_argument("-lm", "--lowMemory", action='store_true')
+    parser.add_argument("-ev", "--evolutions", default='250')
     args = parser.parse_args()
 
-    generate(args.method, int(args.rows), int(args.cols), args.filename, args.upscale, args.colored, args.gif, args.gifDuration, args.lowMemory)
+    generate(args.method, int(args.rows), int(args.cols), args.filename, args.upscale, args.colored, args.gif, args.gifDuration, args.lowMemory, args.evolutions)
 
-def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowMemory):
+def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowMemory, evolutions):
     #random.seed(0)
     import time
     start = time.time()
@@ -54,14 +57,19 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
         grid = recursive_division(rows, cols, gif)
     if method.lower() == 'binary':
         grid = binary_tree_maze(rows, cols, gif)
+    if method.lower() == 'cellular':
+        grid = Maze(rows, cols, gif, int(evolutions))
     tracemalloc.start()    
     if gif:
         if filename == "maze.png":
             filename = "maze.gif"
         create_gif(grid, filename, upscale, duration, lowMemory)
     else:
-        maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
-        create_image(maze, grid, filename, upscale, colored)
+        if method.lower() == 'cellular':
+            create_image(None, grid, filename, upscale, colored)
+        else:
+            maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
+            create_image(maze, grid, filename, upscale, colored)
 
     print("Time to execute: ", time.time() - start)
     snapshot = tracemalloc.take_snapshot()
@@ -76,10 +84,13 @@ def squareRoutine(node, maze, index):
 
 def create_image(maze, grid, filename, upscale, colored):
     #print(maze.shape)
-    for i in range(len(grid)):
-        for j in range(len(grid[i])):
-            current_node = grid[i][j]
-            squareRoutine(current_node, maze, ((2*i) + 1, (2*j) + 1))
+    if maze != None:
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                current_node = grid[i][j]
+                squareRoutine(current_node, maze, ((2*i) + 1, (2*j) + 1))
+    else:
+        maze = grid
     original = Image.fromarray(maze)
     if colored == True:
         tmp = []
