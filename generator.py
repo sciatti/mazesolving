@@ -13,6 +13,7 @@ from prims_test import random_prims
 from wilsons import wilsons
 from Aldous_Broder import aldousBroder
 from recursive_div import recursive_division
+from sidewinder import sidewinder
 #TODO: delete when done
 import profiler
 import tracemalloc
@@ -37,20 +38,24 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
     import time
     start = time.time()
     grid = None
-    if method.lower() == 'dfs':
+    method = method.lower()
+    if method == 'dfs':
         grid = random_DFS(rows, cols, gif)
-    if method.lower() == 'kruskal':
+    if method == 'kruskal':
         grid = random_kruskals(rows, cols, gif)
-    if method.lower() == 'prims':
+    if method == 'prims':
         grid = random_prims(rows, cols, gif)
-    if method.lower() == 'simpleprims':
+    if method == 'simpleprims':
         grid = simplified_random_prims(rows, cols, gif)
-    if method.lower() == 'wilson':
+    if method == 'wilson':
         grid = wilsons(rows, cols, gif)
-    if method.lower() == 'aldous':
+    if method == 'aldous':
         grid = aldousBroder(rows, cols, gif)
-    if method.lower() == 'recursive':
+    if method == 'recursive':
         grid = recursive_division(rows, cols, gif)
+    if method == 'sidewinder':
+        #Swap rows and cols to account for rotation later
+        grid = sidewinder(cols, rows, gif)
     tracemalloc.start()    
     if gif:
         if filename == "maze.png":
@@ -61,7 +66,7 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
         create_gif(grid, filename, upscale, duration, lowMemory)
     else:
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
-        create_image(maze, grid, filename, upscale, colored)
+        create_image(maze, grid, filename, upscale, colored, method)
 
     print("Time to execute: ", time.time() - start)
     snapshot = tracemalloc.take_snapshot()
@@ -74,7 +79,7 @@ def squareRoutine(node, maze, index):
             maze[mark_as_white[0], mark_as_white[1]] = 255
         maze[index[0], index[1]] = 255
 
-def create_image(maze, grid, filename, upscale, colored):
+def create_image(maze, grid, filename, upscale, colored, method):
     #print(maze.shape)
     for i in range(len(grid)):
         for j in range(len(grid[i])):
@@ -128,6 +133,8 @@ def create_image(maze, grid, filename, upscale, colored):
         img = Image.fromarray(maze, 'RGB')
     else:
         img = Image.fromarray(maze)
+        if method == 'sidewinder':
+            img = img.rotate(90)
     if upscale != '1':
         img = img.resize((maze.shape[0] * int(upscale), maze.shape[0] * int(upscale)), Image.NEAREST)
     img.save(filename)
