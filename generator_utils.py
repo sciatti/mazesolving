@@ -177,7 +177,7 @@ def checkRules(grid, index, rule):
             return True
     return False
 
-def start_cells(grid, y, x, random, visited):
+def start_cells(grid, y, x, random, visited, unvisited):
     ops = [(0,-1), (0,1), (-1,0), (1,0), (-1,-1), (1,-1), (-1,1), (1,1)]
     dirs = random.sample(ops, k=len(ops))
     count = 0
@@ -188,6 +188,8 @@ def start_cells(grid, y, x, random, visited):
             if y + index[0] == 0 or grid.shape[0] - 1 == y + index[0] or x + index[1] == 0 or grid.shape[1] - 1 == x + index[1]:
                 continue
             grid[y + index[0], x + index[1]] = 255
+            visited.add((y + index[0], x + index[1]))
+            update_set(y + index[0], x + index[1], visited, grid, unvisited)
             count += 1
     if count == 0:
         return False
@@ -200,3 +202,12 @@ def check_visited(y, x, visited):
             return True
     return False
             
+def update_set(y, x, all_nodes, grid, unvisited):
+    ops = [(0,-1), (0,1), (-1,0), (1,0), (-1,-1), (1,-1), (-1,1), (1,1)]
+    for index in ops:
+        if y + index[0] == 0 or grid.shape[0] - 1 == y + index[0] or x + index[1] == 0 or grid.shape[1] - 1 == x + index[1]:
+            continue
+        all_nodes.add((y,x))
+        if (y,x) in unvisited:
+            unvisited.remove((y,x))
+        
