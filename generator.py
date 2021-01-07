@@ -13,11 +13,8 @@ from prims_test import random_prims
 from wilsons import wilsons
 from Aldous_Broder import aldousBroder
 from recursive_div import recursive_division
-<<<<<<< HEAD
 from binary import binary_tree_maze
-=======
 from sidewinder import sidewinder
->>>>>>> sidewinder
 #TODO: delete when done
 import profiler
 import tracemalloc
