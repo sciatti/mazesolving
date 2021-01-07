@@ -60,10 +60,7 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
     if gif:
         if filename == "maze.png":
             filename = "maze.gif"
-        #if method.lower() == "recursive":
-        #    util.create_gif(grid, filename, upscale, duration)
-        #else:
-        create_gif(grid, filename, upscale, duration, lowMemory)
+        create_gif(grid, filename, upscale, duration, lowMemory, method)
     else:
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
         create_image(maze, grid, filename, upscale, colored, method)
@@ -139,7 +136,7 @@ def create_image(maze, grid, filename, upscale, colored, method):
         img = img.resize((maze.shape[0] * int(upscale), maze.shape[0] * int(upscale)), Image.NEAREST)
     img.save(filename)
 
-def create_gif(gif_arr, filename, upscale, duration, low_mem):
+def create_gif(gif_arr, filename, upscale, duration, low_mem, method):
     img_arr = []
     print(len(gif_arr), "images required for this gif")
     if not low_mem:
@@ -148,9 +145,14 @@ def create_gif(gif_arr, filename, upscale, duration, low_mem):
             if upscale != '1':
                 x = x.resize((x.size[0] * int(upscale), x.size[0] * int(upscale)), Image.NEAREST)
             img_arr.append(x)
-        duration = (int(duration) * 1000)/len(gif_arr)
+        if method == 'sidewinder':
+            #ROTATE
+            img = img_arr[-1]
+            for deg in range(0,91,2):
+                img_arr.append(img.rotate(deg))
+        duration = (int(duration) * 1000)/len(img_arr)
         img = img_arr[0]
-        duration_arr = [max(int(duration), 20)] * (len(gif_arr) - 1)
+        duration_arr = [max(int(duration), 20)] * (len(img_arr) - 1)
         duration_arr.append(2000)
         img.save(filename, save_all=True, append_images=img_arr[1:], loop=0, duration=duration_arr, optimize=True)
     else:
