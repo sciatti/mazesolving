@@ -154,3 +154,60 @@ def print_maze(grid):
         for j in range(maze.shape[1]):
             print(maze[i,j].decode('utf-8'), end=" ")
         print()
+
+def countNeighbors(grid, index, rows, cols):
+    #order: Left, Right, Top, Down, Top Left, Bottom Left, Top Right, Bottom Right
+    ops = [(0,-1), (0,1), (-1,0), (1,0), (-1,-1), (1,-1), (-1,1), (1,1)]
+    #short for operations
+    count = 0
+    for i in range(8):
+        #bounds checking
+        x = index[1] + ops[i][1]
+        y = index[0] + ops[i][0]
+        if bounds_check((y,x), rows, cols):
+            continue
+        if grid[y,x] == 255:
+            count += 1
+    return count
+
+def checkRules(grid, index, rule):
+    c = countNeighbors(grid, index, grid.shape[0], grid.shape[1])    
+    for character in rule:
+        if c == int(character):
+            return True
+    return False
+
+def start_cells(grid, y, x, random, visited, unvisited):
+    ops = [(0,-1), (0,1), (-1,0), (1,0), (-1,-1), (1,-1), (-1,1), (1,1)]
+    dirs = random.sample(ops, k=len(ops))
+    count = 0
+    for index in dirs:
+        if count == len(dirs):
+            break
+        if not bounds_check((y + index[0], x + index[1]), grid.shape[0], grid.shape[1]):
+            if y + index[0] == 0 or grid.shape[0] - 1 == y + index[0] or x + index[1] == 0 or grid.shape[1] - 1 == x + index[1]:
+                continue
+            grid[y + index[0], x + index[1]] = 255
+            visited.add((y + index[0], x + index[1]))
+            update_set(y + index[0], x + index[1], visited, grid, unvisited)
+            count += 1
+    if count == 0:
+        return False
+    return True
+
+def check_visited(y, x, visited):
+    ops = [(0,-1), (0,1), (-1,0), (1,0), (-1,-1), (1,-1), (-1,1), (1,1)]
+    for index in ops:
+        if (y + index[0], x + index[1]) in visited:
+            return True
+    return False
+            
+def update_set(y, x, all_nodes, grid, unvisited):
+    ops = [(0,-1), (0,1), (-1,0), (1,0), (-1,-1), (1,-1), (-1,1), (1,1)]
+    for index in ops:
+        if y + index[0] == 0 or grid.shape[0] - 1 == y + index[0] or x + index[1] == 0 or grid.shape[1] - 1 == x + index[1]:
+            continue
+        all_nodes.add((y,x))
+        if (y,x) in unvisited:
+            unvisited.remove((y,x))
+        
