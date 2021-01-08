@@ -58,7 +58,10 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
         grid = binary_tree_maze(rows, cols, gif)
     if method == 'sidewinder':
         #Swap rows and cols to account for rotation later
-        grid = sidewinder(cols, rows, gif)
+        temp = rows
+        rows = cols
+        cols = temp
+        grid = sidewinder(rows, cols, gif)
     tracemalloc.start()    
     if gif:
         if filename == "maze.png":
@@ -134,7 +137,7 @@ def create_image(maze, grid, filename, upscale, colored, method):
     else:
         img = Image.fromarray(maze)
         if method == 'sidewinder':
-            img = img.rotate(90)
+            img = img.rotate(90, expand=True)
     if upscale != '1':
         img = img.resize((maze.shape[0] * int(upscale), maze.shape[0] * int(upscale)), Image.NEAREST)
     img.save(filename)
