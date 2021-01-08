@@ -16,6 +16,7 @@ from recursive_div import recursive_division
 from binary import binary_tree_maze
 from cellular_automata import Maze
 from cellular_automata import Mazectric
+from sidewinder import sidewinder
 #TODO: delete when done
 import profiler
 import tracemalloc
@@ -43,38 +44,44 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
     import time
     start = time.time()
     grid = None
-    if method.lower() == 'dfs':
+    method = method.lower()
+    if method == 'dfs':
         grid = random_DFS(rows, cols, gif)
-    if method.lower() == 'kruskal':
+    if method == 'kruskal':
         grid = random_kruskals(rows, cols, gif)
-    if method.lower() == 'prims':
+    if method == 'prims':
         grid = random_prims(rows, cols, gif)
-    if method.lower() == 'simpleprims':
+    if method == 'simpleprims':
         grid = simplified_random_prims(rows, cols, gif)
-    if method.lower() == 'wilson':
+    if method == 'wilson':
         grid = wilsons(rows, cols, gif)
-    if method.lower() == 'aldous':
+    if method == 'aldous':
         grid = aldousBroder(rows, cols, gif)
-    if method.lower() == 'recursive':
+    if method == 'recursive':
         grid = recursive_division(rows, cols, gif)
-    if method.lower() == 'binary':
+    if method == 'binary':
         grid = binary_tree_maze(rows, cols, gif)
-    if method.lower() == 'cellular':
+    if method == 'cellular':
         if automataType == 'Maze':
             grid = Maze(rows, cols, gif, int(evolutions), int(stopLength))
         else:
             grid = Mazectric(rows, cols, gif, int(evolutions), int(stopLength))
+    if method == 'sidewinder':
+        #Swap rows and cols to account for rotation later
+        grid = sidewinder(cols, rows, gif)
+    
     tracemalloc.start()    
+    
     if gif:
         if filename == "maze.png":
             filename = "maze.gif"
-        create_gif(grid, filename, upscale, duration, lowMemory)
+        create_gif(grid, filename, upscale, duration, lowMemory, method)
     else:
-        if method.lower() == 'cellular':
-            create_image(None, grid, filename, upscale, colored)
+        if method == 'cellular':
+            create_image(np.zeros((0,0)), grid, filename, upscale, colored, method)
         else:
             maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
-            create_image(maze, grid, filename, upscale, colored)
+            create_image(maze, grid, filename, upscale, colored, method)
 
     print("Time to execute: ", time.time() - start)
     snapshot = tracemalloc.take_snapshot()
@@ -87,9 +94,9 @@ def squareRoutine(node, maze, index):
             maze[mark_as_white[0], mark_as_white[1]] = 255
         maze[index[0], index[1]] = 255
 
-def create_image(maze, grid, filename, upscale, colored):
+def create_image(maze, grid, filename, upscale, colored, method):
     #print(maze.shape)
-    if maze != None:
+    if maze.shape != (0,0):
         for i in range(len(grid)):
             for j in range(len(grid[i])):
                 current_node = grid[i][j]
@@ -144,11 +151,13 @@ def create_image(maze, grid, filename, upscale, colored):
         img = Image.fromarray(maze, 'RGB')
     else:
         img = Image.fromarray(maze)
+        if method == 'sidewinder':
+            img = img.rotate(90)
     if upscale != '1':
         img = img.resize((maze.shape[0] * int(upscale), maze.shape[0] * int(upscale)), Image.NEAREST)
     img.save(filename)
 
-def create_gif(gif_arr, filename, upscale, duration, low_mem):
+def create_gif(gif_arr, filename, upscale, duration, low_mem, method):
     img_arr = []
     print(len(gif_arr), "images required for this gif")
     if not low_mem:
@@ -157,9 +166,14 @@ def create_gif(gif_arr, filename, upscale, duration, low_mem):
             if upscale != '1':
                 x = x.resize((x.size[0] * int(upscale), x.size[0] * int(upscale)), Image.NEAREST)
             img_arr.append(x)
-        duration = (int(duration) * 1000)/len(gif_arr)
+        if method == 'sidewinder':
+            #ROTATE
+            img = img_arr[-1]
+            for deg in range(0,91,2):
+                img_arr.append(img.rotate(deg))
+        duration = (int(duration) * 1000)/len(img_arr)
         img = img_arr[0]
-        duration_arr = [max(int(duration), 20)] * (len(gif_arr) - 1)
+        duration_arr = [max(int(duration), 20)] * (len(img_arr) - 1)
         duration_arr.append(2000)
         img.save(filename, save_all=True, append_images=img_arr[1:], loop=0, duration=duration_arr, optimize=True)
     else:
