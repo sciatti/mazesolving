@@ -32,11 +32,13 @@ def main():
     parser.add_argument("-gd", "--gifDuration", default='60')
     parser.add_argument("-lm", "--lowMemory", action='store_true')
     parser.add_argument("-ev", "--evolutions", default='250')
+    parser.add_argument("-sl", "--stopLength", default='10')
+    parser.add_argument("-at", "--automataType", default='Maze')
     args = parser.parse_args()
 
-    generate(args.method, int(args.rows), int(args.cols), args.filename, args.upscale, args.colored, args.gif, args.gifDuration, args.lowMemory, args.evolutions)
+    generate(args.method, int(args.rows), int(args.cols), args.filename, args.upscale, args.colored, args.gif, args.gifDuration, args.lowMemory, args.evolutions, args.stopLength, args.automataType)
 
-def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowMemory, evolutions):
+def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowMemory, evolutions, stopLength, automataType):
     #random.seed(0)
     import time
     start = time.time()
@@ -58,7 +60,10 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
     if method.lower() == 'binary':
         grid = binary_tree_maze(rows, cols, gif)
     if method.lower() == 'cellular':
-        grid = Maze(rows, cols, gif, int(evolutions))
+        if automataType == 'Maze':
+            grid = Maze(rows, cols, gif, int(evolutions), int(stopLength))
+        else:
+            grid = Mazectric(rows, cols, gif, int(evolutions), int(stopLength))
     tracemalloc.start()    
     if gif:
         if filename == "maze.png":
