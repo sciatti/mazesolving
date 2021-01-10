@@ -17,6 +17,7 @@ from binary import binary_tree_maze
 from cellular_automata import Maze
 from cellular_automata import Mazectric
 from sidewinder import sidewinder
+from hunt_and_kill import hunt_and_kill
 #TODO: delete when done
 import profiler
 import tracemalloc
@@ -72,6 +73,8 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
         rows = cols
         cols = temp
         grid = sidewinder(rows, cols, gif)
+    if method == 'hak':
+        grid = hunt_and_kill(rows, cols, gif)
     tracemalloc.start()    
     
     if gif:
