@@ -32,12 +32,11 @@ def sidewinder(rows, cols, gif):
                 grid[r][col].walls[2] = 'X'
                 run_start = c + 1
     
-    #Side entrance and exit then rotate in generator
-    x = random.randint(0, rows - 1)
-    grid[x][0].walls[0] = 'X'
+    x = random.randint(0, cols - 1)
+    grid[0][x].walls[2] = 'X'
     
-    x = random.randint(0, rows - 1)
-    grid[x][cols - 1].walls[1] = 'X'
+    x = random.randint(0, cols - 1)
+    grid[rows - 1][x].walls[3] = 'X'
     return grid
 
 def sidewinder_gif(rows, cols):
@@ -68,12 +67,11 @@ def sidewinder_gif(rows, cols):
                 newIMG = util.create_snapshot(gif_arr[-1], (r*2 + 1, c*2 + 1), -1)
                 run_start = c + 1
     
-    #Side entrance and exit then rotate in generator
-    x = random.randint(0, rows - 1)
+    x = random.randint(0, cols - 1)
     
-    y = random.randint(0, rows - 1)
-    newIMG = util.create_snapshot(gif_arr[-1].copy(), (x *2 + 1, 0), -1)
+    y = random.randint(0, cols - 1)
+    newIMG = util.create_snapshot(gif_arr[-1].copy(), (0, x *2 + 1), -1)
     gif_arr.append(newIMG)
-    newIMG = util.create_snapshot(gif_arr[-1], (y *2 + 1, cols*2), -1)
+    newIMG = util.create_snapshot(gif_arr[-1], (cols*2, y *2 + 1), -1)
     
     return gif_arr

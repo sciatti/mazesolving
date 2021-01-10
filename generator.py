@@ -54,16 +54,15 @@ def generate(method, rows, cols, filename, upscale, colored, gif, duration, lowM
     if method == 'recursive':
         grid = recursive_division(rows, cols, gif)
     if method == 'sidewinder':
-        #Swap rows and cols to account for rotation later
-        grid = sidewinder(cols, rows, gif)
+        grid = sidewinder(rows, cols, gif)
     tracemalloc.start()    
     if gif:
         if filename == "maze.png":
             filename = "maze.gif"
-        create_gif(grid, filename, upscale, duration, lowMemory, method)
+        create_gif(grid, filename, upscale, duration, lowMemory)
     else:
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
-        create_image(maze, grid, filename, upscale, colored, method)
+        create_image(maze, grid, filename, upscale, colored)
 
     print("Time to execute: ", time.time() - start)
     snapshot = tracemalloc.take_snapshot()
@@ -76,7 +75,7 @@ def squareRoutine(node, maze, index):
             maze[mark_as_white[0], mark_as_white[1]] = 255
         maze[index[0], index[1]] = 255
 
-def create_image(maze, grid, filename, upscale, colored, method):
+def create_image(maze, grid, filename, upscale, colored):
     #print(maze.shape)
     for i in range(len(grid)):
         for j in range(len(grid[i])):
@@ -130,13 +129,11 @@ def create_image(maze, grid, filename, upscale, colored, method):
         img = Image.fromarray(maze, 'RGB')
     else:
         img = Image.fromarray(maze)
-        if method == 'sidewinder':
-            img = img.rotate(90)
     if upscale != '1':
         img = img.resize((maze.shape[0] * int(upscale), maze.shape[0] * int(upscale)), Image.NEAREST)
     img.save(filename)
 
-def create_gif(gif_arr, filename, upscale, duration, low_mem, method):
+def create_gif(gif_arr, filename, upscale, duration, low_mem):
     img_arr = []
     print(len(gif_arr), "images required for this gif")
     if not low_mem:
@@ -145,11 +142,6 @@ def create_gif(gif_arr, filename, upscale, duration, low_mem, method):
             if upscale != '1':
                 x = x.resize((x.size[0] * int(upscale), x.size[0] * int(upscale)), Image.NEAREST)
             img_arr.append(x)
-        if method == 'sidewinder':
-            #ROTATE
-            img = img_arr[-1]
-            for deg in range(0,91,2):
-                img_arr.append(img.rotate(deg))
         duration = (int(duration) * 1000)/len(img_arr)
         img = img_arr[0]
         duration_arr = [max(int(duration), 20)] * (len(img_arr) - 1)
