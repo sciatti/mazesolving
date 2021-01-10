@@ -12,8 +12,6 @@ def sidewinder(rows, cols, gif):
     
     grid = [[node(['L','R','T','B']) for j in range(cols)] for i in range(rows)]
     
-    
-    
     for c in range(cols - 1):
         #Top row must be a single passage
         grid[0][c].walls[1] = 'X'

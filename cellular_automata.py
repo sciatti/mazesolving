@@ -39,14 +39,12 @@ def driver(rows, cols, gif, survivalRule, birthRule, evolutions, stop_len):
                         grid[y,x] = 255
                         changes = True
                         util.update_set(y, x, all_nodes, grid, unvisited)
-                        #visited.add((y,x))
                 else:
                     #cell is alive, check for survival
                     if not util.checkRules(grid, (y,x), survivalRule):
                         grid[y,x] = 0
                         changes = True
                         util.update_set(y, x, all_nodes, grid, unvisited)
-                        #visited.remove((y,x))
         count += 1
         if not changes:
             #jumpstart the grid by marking a random section of cells that havent been visited as alive

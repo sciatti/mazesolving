@@ -19,9 +19,7 @@ class node:
         self.walls = walls_in
 
 def random_kruskals(rows, cols, gif):
-    #[row][col]
-    #1
-    #cells = [[cell(i,j) for j in range(cols)] for i in range(rows)]
+    #1 - Add list of all walls
     wall_arr = []
     for i in range(rows):
         for j in range(cols):
@@ -41,8 +39,7 @@ def random_kruskals(rows, cols, gif):
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
         gif_arr.append(maze)
         util.mark_node((0, x * 2 + 1), gif_arr)
-    
-    assert (len(wall_arr) == 2 * (rows - 1) * (cols - 1) + (rows - 1) + (cols - 1))
+        
     #2
     sequence = random.sample(range(len(wall_arr)), len(wall_arr))
     for i in sequence:

@@ -14,12 +14,12 @@ class node:
 def random_DFS(rows, cols, gif):
     stack = deque()
     grid = [[node((i, j), ['L', 'R', 'T', 'B'], False) for j in range(cols)] for i in range(rows)]
-    #1
+    
     x = random.randint(0, cols - 1)
     grid[0][x].visited = True
     grid[0][x].walls[2] = 'X'
     stack.append(grid[0][x])
-    #2
+    
     gif_arr = []
     if gif:
         maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
@@ -27,20 +27,18 @@ def random_DFS(rows, cols, gif):
         util.mark_node((0, x * 2 + 1), gif_arr)
 
     while len(stack) != 0:
-        #1
         curr = stack.pop()
-        #2
+        
         neighbors = util.neighborCheck(grid, curr, rows, cols)
         if len(neighbors) > 0:
-            #1
             stack.append(curr)
-            #2
+            
             nbr_dir = neighbors[random.randint(0, len(neighbors) - 1)]
             new_index = util.nbr_index(curr.index, curr.walls[nbr_dir])
             new_curr = grid[new_index[0]][new_index[1]]
-            #3
+            
             curr.walls[nbr_dir] = 'X'
-            #4
+            
             new_curr.visited = True
             stack.append(new_curr)
             if gif:
