@@ -63,3 +63,49 @@ def simplified_random_prims(rows, cols, gif):
         return gif_arr
 
     return grid
+
+def random_prims(rows, cols, gif):
+    directions = ['L', 'R', 'T', 'B']
+    grid = [[node(['L', 'R', 'T', 'B']) for j in range(cols)] for i in range(rows)]
+    
+    r = random.randrange(rows)
+    c = random.randrange(cols)
+    
+    grid[r][c].visited = True
+    
+    #Set of tuples of tuples --> cell 1 and neighbor
+    walls_list = set()
+    
+    for dir in directions:
+        nbr = util.nbr_index((r,c), dir)
+        if not util.bounds_check(nbr, rows, cols):
+            walls_list.add(((r,c), nbr))
+            
+    while len(walls_list):
+        #Pick random wall
+        wall = random.choice(tuple(walls_list))
+        walls_list.remove(wall)
+        cellA = wall[0]
+        cellB = wall[1]
+        
+        if not grid[cellB[0]][cellB[1]].visited:
+            #Other cell not visited yet --> Tear down wall
+            grid[cellB[0]][cellB[1]].visited = True
+            
+            dir = util.conv_idx_dir(cellA, cellB)
+            wall_idx = util.conv_nbr_wall(dir)
+            grid[cellA[0]][cellA[1]].walls[wall_idx] = 'X'
+            
+            for dir in directions:
+                #Add unvisited neighbor walls to set
+                nbr = util.nbr_index(cellB, dir)
+                if not util.bounds_check(nbr, rows, cols) and not grid[nbr[0]][nbr[1]].visited:
+                    walls_list.add((cellB, nbr))
+    
+    x = random.randint(0, cols - 1)
+    grid[0][x].walls[2] = 'X'
+    
+    x = random.randint(0, cols - 1)
+    grid[rows - 1][x].walls[3] = 'X'
+    
+    return grid

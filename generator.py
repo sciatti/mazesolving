@@ -9,7 +9,8 @@ import generator_utils as util
 from random_dfs import random_DFS
 from random_kruskal import random_kruskals
 from random_prims import simplified_random_prims
-from prims_test import random_prims
+#from prims_test import random_prims
+from random_prims import random_prims
 from wilsons import wilsons
 from Aldous_Broder import aldousBroder
 from recursive_div import recursive_division
