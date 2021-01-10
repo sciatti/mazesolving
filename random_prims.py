@@ -7,7 +7,6 @@ class node:
         self.walls = walls_in
         self.visited = False
 
-#TODO
 def simplified_random_prims(rows, cols, gif):
     #Top Entrance
     x = random.randint(0, cols - 1)
@@ -73,6 +72,11 @@ def random_prims(rows, cols, gif):
     
     grid[r][c].visited = True
     
+    gif_arr = []
+    if gif:
+        maze = np.zeros(((2 * rows) + 1, (2 * cols) + 1), dtype=np.uint8)
+        gif_arr.append(maze)
+    
     #Set of tuples of tuples --> cell 1 and neighbor
     walls_list = set()
     
@@ -96,6 +100,9 @@ def random_prims(rows, cols, gif):
             wall_idx = util.conv_nbr_wall(dir)
             grid[cellA[0]][cellA[1]].walls[wall_idx] = 'X'
             
+            if gif:
+                util.mark_change(util.grid_to_image(cellA), gif_arr, wall_idx, util.grid_to_image(cellB))
+            
             for dir in directions:
                 #Add unvisited neighbor walls to set
                 nbr = util.nbr_index(cellB, dir)
@@ -105,7 +112,13 @@ def random_prims(rows, cols, gif):
     x = random.randint(0, cols - 1)
     grid[0][x].walls[2] = 'X'
     
-    x = random.randint(0, cols - 1)
-    grid[rows - 1][x].walls[3] = 'X'
+    y = random.randint(0, cols - 1)
+    grid[rows - 1][y].walls[3] = 'X'
+    
+    if gif:
+        newIMG = util.create_snapshot(gif_arr[-1].copy(), (0, 2 * x + 1), -1)
+        newIMG = util.create_snapshot(newIMG, (rows*2, 2*y + 1), -1)
+        gif_arr.append(newIMG)
+        return gif_arr
     
     return grid
