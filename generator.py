@@ -192,4 +192,5 @@ def create_gif(gif_arr, filename, upscale, duration, low_mem):
             count = end
             img.save(filename, save_all=True, append_images=img_arr[:], loop=0, duration=(int(duration) * 1000 / len(img_arr))/len(gif_arr), optimize=True)
 
-main()
+if __name__ == "__main__":
+    main()
