@@ -9,7 +9,6 @@ class node:
         self.walls = walls_in
 
 def binary_tree_maze(rows, cols, gif):
-    random.seed(0)
     grid = [[node(['L', 'R', 'T', 'B']) for j in range(cols)] for i in range(rows)]
     dirArr = [1, 3] #r,b
     
