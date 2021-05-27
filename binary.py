@@ -25,14 +25,15 @@ def binary_tree_maze(rows, cols, gif):
         for j in range(cols):
             if i == rows - 1:
                 x = 0
-                if i == rows - 1 and j == rows - 1:
-                    continue
             elif j == cols - 1:
                 x = 1
             else:
                 x = random.randint(0, 1)
             grid[i][j].walls[dirArr[x]] = 'X'
             if gif:
+                if i == rows - 1 and j == cols - 1:
+                    util.mark_change(util.grid_to_image((i, j)), gif_arr, -1)
+                    continue
                 util.mark_change(util.grid_to_image((i, j)), gif_arr, dirArr[x])
 
     x = random.randint(0, cols - 1)

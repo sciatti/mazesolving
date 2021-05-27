@@ -93,12 +93,16 @@ def maze_index(index, dir):
     return (index[0] + 1, index[1])
 
 def create_snapshot(new_image, index, direction, color=None):
+    # set marking color to 255 (white) if none provided
     if color == None:
         color = 255
+    # assign the given color to the cell to mark it as active
     new_image[index[0], index[1]] = color
     if direction < 0:
         return new_image
+    # find the index of the wall to break remove
     mark_as_white = maze_index(index, direction)
+    # remove the wall (set it to the provided color)
     new_image[mark_as_white[0], mark_as_white[1]] = color
     return new_image
 
@@ -106,6 +110,7 @@ def grid_to_image(index):
     return (index[0] * 2 + 1, index[1] * 2 + 1)
 
 def mark_change(idx, gif_arr, wall_idx, secondIdx = None, color = None):
+    # mark one or two changes, algorithm specific 
     if secondIdx == None:
         newIMG = create_snapshot(gif_arr[-1].copy(), idx, wall_idx, color)
     else:
